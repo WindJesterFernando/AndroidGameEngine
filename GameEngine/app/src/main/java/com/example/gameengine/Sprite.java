@@ -8,6 +8,7 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.util.DebugUtils;
 import android.util.Log;
 
 public class Sprite extends AbstractSprite {
@@ -20,7 +21,7 @@ public class Sprite extends AbstractSprite {
     private int frameSizeX;
     private int frameSizeY;
 
-    private Vectror2 postion;
+    private Vectror2 position;
     private Vectror2 scale;
 
     private Vectror2 lerpStart, lerpEnd;
@@ -35,6 +36,8 @@ public class Sprite extends AbstractSprite {
     public float radius;
 
     public boolean checkBoundingBoxCollisionDetection;
+
+    private Vectror2 speed;
 
     public Sprite(Bitmap SpriteSheet, int numberOfFramesX, int numberOfFramesY, int xFrame, int yFrame)
     {
@@ -64,7 +67,7 @@ public class Sprite extends AbstractSprite {
 
     public void SetPostion(Vectror2 Postion)
     {
-        postion = Postion;
+        position = Postion;
         RefreshDestinationRect();
         //Log.d("test", "test " + postion.toString());
     }
@@ -77,7 +80,7 @@ public class Sprite extends AbstractSprite {
 
     private void RefreshDestinationRect()
     {
-        destRect = new Rect((int)postion.x - (int)(frameSizeX / 2f * scale.x), (int)postion.y - (int)(frameSizeY / 2f * scale.y), (int)postion.x + (int)(frameSizeX / 2f * scale.x), (int)postion.y + (int)(frameSizeY / 2f * scale.y));
+        destRect = new Rect((int)position.x - (int)(frameSizeX / 2f * scale.x), (int)position.y - (int)(frameSizeY / 2f * scale.y), (int)position.x + (int)(frameSizeX / 2f * scale.x), (int)position.y + (int)(frameSizeY / 2f * scale.y));
     }
 
     public Bitmap GetSpriteSheet()
@@ -97,7 +100,7 @@ public class Sprite extends AbstractSprite {
 
     public Vectror2 GetPosition()
     {
-        return postion;
+        return position;
     }
 
     @Override
@@ -130,29 +133,32 @@ public class Sprite extends AbstractSprite {
             Vectror2 newPos = new Vectror2(lerpStart.x + normalizeVec.x * amount * (float) hyp, lerpStart.y + normalizeVec.y * amount * (float)hyp);
             //Log.d("lerp", "newPos = " + newPos.ToString());
 
-            SetPostion(newPos);
+
+            speed = new Vectror2(newPos.x - position.x, newPos.y - position.y);
+            //SetPostion(newPos);
 
         }
 
         if(moveToPostition != null)
         {
 
-            Vectror2 difference = new Vectror2(moveToPostition.x - postion.x, moveToPostition.y - postion.y);
+            Vectror2 difference = new Vectror2(moveToPostition.x - position.x, moveToPostition.y - position.y);
 
             double hyp = Math.sqrt(difference.x * difference.x + difference.y * difference.y);
             Vectror2 normalizeVec = new Vectror2(difference.x / (float)hyp, difference.y / (float)hyp);
 
             Vectror2 moveAmount = new Vectror2(normalizeVec.x * moveToSpeed, normalizeVec.y * moveToSpeed);
 
-            Vectror2 newPos = new Vectror2(postion.x + moveAmount.x, postion.y + moveAmount.y);
-
+            Vectror2 newPos = new Vectror2(position.x + moveAmount.x, position.y + moveAmount.y);
 
             if(hyp < moveToSpeed) {
                 newPos = moveToPostition;
                 moveToPostition = null;
             }
 
-            SetPostion(newPos);
+            speed = new Vectror2(newPos.x - position.x, newPos.y - position.y);
+
+            //SetPostion(newPos);
 
         }
 
@@ -178,7 +184,7 @@ public class Sprite extends AbstractSprite {
 
         if(rotation != 0) {
             canvas.save();//Saving the canvas and later restoring it so only this image will be rotated.
-            canvas.rotate(rotation, postion.x, postion.y);
+            canvas.rotate(rotation, position.x, position.y);
 
             canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
 
@@ -218,7 +224,7 @@ public class Sprite extends AbstractSprite {
     @Override
     public int GetBottomPosition()
     {
-        return (int)(postion.y + (float) frameSizeY * scale.y / 2f);
+        return (int)(position.y + (float) frameSizeY * scale.y / 2f);
     }
 
     public boolean CheckForCircleCollision(Sprite spr)
@@ -227,13 +233,17 @@ public class Sprite extends AbstractSprite {
         if(!checkCircleCollisionDetection)
             return false;
 
-        float xDif = spr.GetPosition().x - postion.x;
-        float yDif = spr.GetPosition().y - postion.y;
+        float xDif = spr.GetPosition().x - position.x;
+        float yDif = spr.GetPosition().y - position.y;
 
         double hyp = Math.sqrt(xDif * xDif + yDif * yDif);
 
         if(radius + spr.GetRadiusForCicleCollisionDetection() > hyp)
+        {
+            Log.d("Collision","Circle Detected");
+            speed = null;
             return true;
+        }
 
         return false;
     }
@@ -254,46 +264,240 @@ public class Sprite extends AbstractSprite {
         checkBoundingBoxCollisionDetection = true;
     }
 
-    public boolean CheckForBoundingBoxCollision(Sprite spr)
+    public boolean CheckForBoundingBoxCollision(Sprite spr)//, boolean manageSpeed)
     {
 
         if(!checkBoundingBoxCollisionDetection)
             return false;
 
-        boolean xCol = false;
-        boolean yCol = false;
+        boolean xColLeftWithSpeed = false, xColRightWithSpeed = false;
+        boolean yColTopWithSpeed = false, yColBottomWithSpeed = false;
 
+        boolean xColLeft = false, xColRight = false;
+        boolean yColTop = false, yColBottom = false;
+
+        Vectror2 unModifiedSpeed = null;
+        if(speed != null)
+            unModifiedSpeed = new Vectror2(speed.x, speed.y);
+        boolean xSpeedWasModifiedToSlideIntoLedge = false, ySpeedWasModifiedToSlideIntoLedge = false;
+
+        Vectror2 posWithSpeed;
+
+        if(speed != null)
+        {
+            posWithSpeed = new Vectror2(position.x + speed.x, position.y + speed.y);
+        }
+        else
+            posWithSpeed = position;
 
         float x1 = spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
         float x2 = spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
 
-        float ox1 = postion.x - (frameSizeX / 2f * scale.x);
-        float ox2 = postion.x + (frameSizeX / 2f * scale.x);
+        float ox1 = posWithSpeed.x - (frameSizeX / 2f * scale.x);
+        float ox2 = posWithSpeed.x + (frameSizeX / 2f * scale.x);
 
         if (x1 > ox1 && x1 < ox2)
-            xCol = true;
+            xColRightWithSpeed = true;
 
         if (x2 > ox1 && x2 < ox2)
-            xCol = true;
+            xColLeftWithSpeed = true;
+
+
+
+        x1 = spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
+        x2 = spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
+
+        ox1 = position.x - (frameSizeX / 2f * scale.x);
+        ox2 = position.x + (frameSizeX / 2f * scale.x);
+
+        if (x1 > ox1 && x1 < ox2)
+            xColRight = true;
+
+        if (x2 > ox1 && x2 < ox2)
+            xColLeft = true;
+
+
+
 
 
 
         float y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
         float y2 = spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
 
-        float oy1 = postion.y - (frameSizeY / 2f * scale.y);
-        float oy2 = postion.y + (frameSizeY / 2f * scale.y);
+        float oy1 = posWithSpeed.y - (frameSizeY / 2f * scale.y);
+        float oy2 = posWithSpeed.y + (frameSizeY / 2f * scale.y);
 
         if (y1 > oy1 && y1 < oy2)
-            yCol = true;
+            yColBottomWithSpeed = true;
 
         if (y2 > oy1 && y2 < oy2)
-            yCol = true;
+            yColTopWithSpeed = true;
 
 
 
-        if(xCol && yCol)
+
+        y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
+        y2 = spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
+
+        oy1 = position.y - (frameSizeY / 2f * scale.y);
+        oy2 = position.y + (frameSizeY / 2f * scale.y);
+
+        if (y1 > oy1 && y1 < oy2)
+            yColBottom = true;
+
+        if (y2 > oy1 && y2 < oy2)
+            yColTop = true;
+
+
+
+
+        if((xColLeftWithSpeed || xColRightWithSpeed) && (yColBottomWithSpeed || yColTopWithSpeed))
+        {
+            //Log.d("Collision","Bounding Box Detected");
+
+            //WE NEED: Where the collision is, and by how much
+
+            //speed = null;
+            //speed.y = 0;
+            //speed.x = 0;
+
+            if(speed != null) {
+                if (xColRightWithSpeed) {
+
+                    if(xColRight)
+                        ;//speed.x = 0;
+                    else {
+                        float suggestedNewSpeed = (spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x + (frameSizeX / 2f * scale.x));
+
+                        if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)){//if (speed.x > suggestedNewSpeed) {
+                            if (Math.abs(suggestedNewSpeed) > 10) {
+                                Log.d("collsion", tag + " Right");
+
+                                Log.d("collision", "left of other sprite is " + (spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x)));
+                                Log.d("collision", "right of this sprite is " + (position.x + (frameSizeX / 2f * scale.x)));
+
+                                Log.d("Collision", "Changing Speed from " + speed.x + " to " + suggestedNewSpeed);
+                            }
+                            speed.x = suggestedNewSpeed;
+                            xSpeedWasModifiedToSlideIntoLedge = true;
+                        }
+                    }
+
+                }
+                if (xColLeftWithSpeed)
+                {
+
+                    if(xColLeft)
+                        ;//speed.x = 0;
+                    else {
+
+                        float suggestedNewSpeed = (spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x - (frameSizeX / 2f * scale.x));
+
+                        if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)){//if (speed.x < suggestedNewSpeed) {
+                            if (Math.abs(suggestedNewSpeed) > 10) {
+                                Log.d("collsion", tag + " Left");
+
+
+                                Log.d("collision", "right of other sprite is " + (spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x)));
+                                Log.d("collision", "left of this sprite is " + (position.x - (frameSizeX / 2f * scale.x)));
+                                Log.d("Collision", "Changing Speed from " + speed.x + " to " + suggestedNewSpeed);
+                            }
+                            speed.x = suggestedNewSpeed;
+                            xSpeedWasModifiedToSlideIntoLedge = true;
+                        }
+                    }
+
+                }
+                if (yColTopWithSpeed)
+                {
+
+                    if (yColTop)
+                        ;//speed.y = 0;
+                    else {
+
+                        float suggestedNewSpeed = (spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y - (frameSizeY / 2f * scale.y));
+
+                        if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)){//if (speed.y < suggestedNewSpeed) {
+                            if (Math.abs(suggestedNewSpeed) > 10) {
+
+                                Log.d("collsion", tag + " Top");
+
+                                Log.d("collision", "bottom of other sprite is " + (spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y)));
+                                Log.d("collision", "top of this sprite is " + (position.y - (frameSizeY / 2f * scale.y)));
+
+                                Log.d("Collision", "Changing Speed from " + speed.y + " to " + suggestedNewSpeed);
+
+                            }
+                            speed.y = suggestedNewSpeed;
+                            ySpeedWasModifiedToSlideIntoLedge = true;
+                        }
+                    }
+
+                }
+                if (yColBottomWithSpeed )
+                {
+
+                    if (yColBottom)
+                        ;//speed.y = 0;
+                    else {
+
+                        float suggestedNewSpeed = (spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y + (frameSizeY / 2f * scale.y));
+
+                        if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)) {
+                            if (Math.abs(suggestedNewSpeed) > 10) {
+
+                                Log.d("collsion", tag + " Bottom");
+
+                                Log.d("collision", "top of other sprite is " + (spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y)));
+                                Log.d("collision", "bottom of this sprite is " + (position.y + (frameSizeY / 2f * scale.y)));
+
+                                Log.d("Collision", "Changing Speed from " + speed.y + " to " + suggestedNewSpeed);
+                            }
+                            speed.y = suggestedNewSpeed;
+                            ySpeedWasModifiedToSlideIntoLedge = true;
+
+                        }
+                    }
+                }
+            }
+
+            if(speed != null) {
+                if (speed.x != unModifiedSpeed.x || speed.y != unModifiedSpeed.y) {
+
+                    if (!xSpeedWasModifiedToSlideIntoLedge) {
+                        if(speed.x < 0) {
+                            speed.x = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                            if(moveToPostition.x > position.x + speed.x)
+                                speed.x = moveToPostition.x - position.x;
+                        }
+                        else {
+                            speed.x = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                            if(moveToPostition.x < position.x + speed.x)
+                                speed.x = moveToPostition.x - position.x;
+                        }
+                    } else if (!ySpeedWasModifiedToSlideIntoLedge) {
+
+                        if(speed.y < 0) {
+                            speed.y = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                            if(moveToPostition.y > position.y + speed.y)
+                                speed.y = moveToPostition.y - position.y;
+                        }
+                        else {
+                            speed.y = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                            if(moveToPostition.y < position.y + speed.y)
+                                speed.y = moveToPostition.y - position.y;
+                        }
+                    }
+                }
+            }
+
+
             return true;
+        }
 
 
 
@@ -318,13 +522,33 @@ public class Sprite extends AbstractSprite {
     public void SetRotationToLookAtSprite(Sprite sprToLookAt)
     {
 
-        float xDif = sprToLookAt.GetPosition().x - postion.x;
-        float yDif = sprToLookAt.GetPosition().y - postion.y;
+        float xDif = sprToLookAt.GetPosition().x - position.x;
+        float yDif = sprToLookAt.GetPosition().y - position.y;
 
         double angle = Math.atan2(xDif, yDif);
 
         rotation = (float) Math.toDegrees(angle) * -1 + 180;
 
+    }
+
+//    public void SetSpeed(Vectror2 Speed)
+//    {
+//        speed = Speed;
+//    }
+
+//    public Vectror2 GetSpeed()
+//    {
+//        return speed;
+//    }
+
+    public void ApplySpeedToPosition()
+    {
+
+        if(speed != null) {
+            //Log.d("speed test", "" + speed);
+            SetPostion(new Vectror2(speed.x + position.x, speed.y + position.y));
+        }
+        speed = null;
     }
 
 }

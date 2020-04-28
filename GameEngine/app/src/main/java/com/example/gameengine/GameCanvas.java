@@ -57,8 +57,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         //onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test2));
         onStageSprites.add(lookAtAvatar = ContentLoader.CreateNewSprite(SpriteID.test4));
         onStageSprites.add(avatar = ContentLoader.CreateNewSprite(SpriteID.test4));
+        avatar.SetPostion(new Vectror2(700, 800));
+        avatar.SetTag("avatar");
 
-
+        //lookAtAvatar.SetScale(new Vectror2(0.33f, 0.33f));
+        avatar.SetScale(new Vectror2(0.33f, 0.33f));
 
         //aStarMap = new AStarMap();
 
@@ -149,29 +152,84 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         onStageSprites = sorted;
 
 
-        Log.d("Collision", "--------");
-        Log.d("Collision", "Check Start");
+//        Log.d("Collision", "--------");
+//        Log.d("Collision", "Check Start");
 
         for (AbstractSprite s: sprites) {
-            if(s instanceof Sprite && s != avatar) {
-                if (((Sprite) s).CheckForCircleCollision(avatar))
-                    Log.d("Collision", "Circle Collision Was Detected");
-                if (((Sprite) s).CheckForBoundingBoxCollision(avatar))
-                    Log.d("Collision", "Bounding Box Was Detected");
+            if(s instanceof Sprite)// && s != avatar) {
+            {
+                for (AbstractSprite s2: sprites) {
+
+                    if(s != s2)
+                    {
+                        ((Sprite) s2).CheckForCircleCollision((Sprite)s);
+                        ((Sprite) s2).CheckForBoundingBoxCollision((Sprite)s);
+                    }
+                }
+                //((Sprite) s).CheckForCircleCollision(avatar);
+                //((Sprite) s).CheckForBoundingBoxCollision(avatar);
+
+//                if (((Sprite) s).CheckForCircleCollision(avatar))
+//                    Log.d("Collision", "Circle Collision Was Detected");
+//                if (((Sprite) s).CheckForBoundingBoxCollision(avatar))
+//                    Log.d("Collision", "Bounding Box Was Detected");
             }
         }
 
         for (AbstractSprite s: onStageSprites) {
-            if(s instanceof Sprite && s != avatar)
+            if(s instanceof Sprite)// && s != avatar)
             {
-                if (((Sprite) s).CheckForCircleCollision(avatar))
-                    Log.d("Collision", "Circle Collision Was Detected");
-                if (((Sprite) s).CheckForBoundingBoxCollision(avatar))
-                    Log.d("Collision", "Bounding Box Was Detected");
+                for (AbstractSprite s2: onStageSprites) {
+
+                    if(s != s2)
+                    {
+                        ((Sprite) s2).CheckForCircleCollision((Sprite)s);
+                        ((Sprite) s2).CheckForBoundingBoxCollision((Sprite)s);
+                    }
+                }
+
+//                ((Sprite) avatar).CheckForCircleCollision((Sprite)s);
+//                ((Sprite) avatar).CheckForBoundingBoxCollision((Sprite)s);
+
+//                if (((Sprite) s).CheckForCircleCollision(avatar))
+//                    Log.d("Collision", "Circle Collision Was Detected");
+//                if (((Sprite) s).CheckForBoundingBoxCollision(avatar))
+//                    Log.d("Collision", "Bounding Box Was Detected");
             }
         }
 
-        lookAtAvatar.SetRotationToLookAtSprite(avatar);
+//        for (AbstractSprite s: onStageSprites) {
+//            if(s instanceof Sprite && s != avatar)
+//            {
+//
+//
+//                ((Sprite) avatar).CheckForCircleCollision((Sprite)s);
+//                ((Sprite) avatar).CheckForBoundingBoxCollision((Sprite)s);
+//
+//                if (((Sprite) s).CheckForCircleCollision(avatar))
+//                    ;//Log.d("Collision", "Circle Collision Was Detected");
+//                if (((Sprite) s).CheckForBoundingBoxCollision(avatar))
+//                    ;//Log.d("Collision", "Bounding Box Was Detected");
+//            }
+//        }
+
+
+
+        for (AbstractSprite s: onStageSprites) {
+            if(s instanceof Sprite)
+            {
+                ((Sprite)s).ApplySpeedToPosition();
+            }
+        }
+        for (AbstractSprite s: sprites) {
+            if(s instanceof Sprite)
+            {
+                ((Sprite)s).ApplySpeedToPosition();
+            }
+        }
+
+
+        //lookAtAvatar.SetRotationToLookAtSprite(avatar);
 
         //avatar.SetRotation(avatar.GetRotation() + (0.25f * (float)deltaTime));
 

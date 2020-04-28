@@ -12,7 +12,10 @@ public class AStarMap {
 
     AStarTile startTile, endTile;
 
+    //The Yellow nodes
     LinkedList<AStarTile> open;
+
+    //The Green nodes
     LinkedList<AStarTile> closed;
 
     final int xTiles = 6, yTiles = 11;
@@ -46,20 +49,20 @@ public class AStarMap {
 
 
 
-        //Debug testing
+//        //Debug testing
         for(int i = 1; i < xTiles; i++)
             map[i][4].MakeWall();
 
         for(int i = yTiles-1; i > 5; i--)
             map[2][i].MakeWall();
 
-//        for(int i = 0; i < xTiles-1; i++)
-//            map[i][2].MakeWall();
-//
-//        map[3][yTiles - 5].MakeWall();
-//        map[4][yTiles - 5].MakeWall();
-//        map[4][yTiles - 3].MakeWall();
-//        map[5][yTiles - 3].MakeWall();
+        for(int i = 0; i < xTiles-1; i++)
+            map[i][2].MakeWall();
+
+        map[3][yTiles - 5].MakeWall();
+        map[4][yTiles - 5].MakeWall();
+        map[4][yTiles - 3].MakeWall();
+        map[5][yTiles - 3].MakeWall();
 
 
 
@@ -87,15 +90,15 @@ public class AStarMap {
         //while(true)  //loop while not found and open has values
 
 
-
-        AStarTile current = GetTileWithLowestSumOfDistances(open);
-
-
-        if(current == null)
+        if(open.size() == 0)//if(current == null)
         {
             Log.d("A*", "No Possible Path");
             return;
         }
+
+        AStarTile current = GetTileWithLowestSumOfDistances(open);
+
+
 
         if (current == endTile)
         {
@@ -152,10 +155,10 @@ public class AStarMap {
         }
     }
 
-
     private AStarTile GetTileWithLowestSumOfDistances(LinkedList<AStarTile> tiles)
     {
         AStarTile lowest = null;
+
         for(AStarTile t: tiles)
         {
             if(lowest == null)
@@ -221,6 +224,8 @@ public class AStarMap {
 
 
 
+
+
         float sideMoveCost = 10;
         float diagonalMoveCost = 14;//(float)Math.sqrt(sideMoveCost * sideMoveCost + sideMoveCost * sideMoveCost);
 
@@ -240,6 +245,7 @@ public class AStarMap {
             numberOfDiagonalMoves = travelX;
             numberOfSideMoves = travelY - travelX;
         }
+
 
         return numberOfDiagonalMoves * diagonalMoveCost +  sideMoveCost * numberOfSideMoves;
 

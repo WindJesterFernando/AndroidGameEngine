@@ -56,7 +56,7 @@ public class AStarTile {
 
             if(onlyDisplaySumOfDistances)
             {
-                ts = new TextSprite("f " + (int)sumOfDistances, new Vectror2(tile.GetPosition().x - 80, tile.GetPosition().y - 0));
+                ts = new TextSprite("" + (int)sumOfDistances, new Vectror2(tile.GetPosition().x - 80, tile.GetPosition().y - 0));
                 ts.SetColor(Color.BLACK);
                 ts.SetTextSize(80);
                 debugTexts.addLast(ts);
