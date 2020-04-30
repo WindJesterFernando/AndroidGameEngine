@@ -44,6 +44,8 @@ public class Sprite extends AbstractSprite {
     private float bounceAtude = 30;
     private Vectror2 bounceEffect;
 
+    private float slideFriction = 1;
+
     public Sprite(Bitmap SpriteSheet, int numberOfFramesX, int numberOfFramesY, int xFrame, int yFrame) {
         super(0);
 
@@ -440,12 +442,12 @@ public class Sprite extends AbstractSprite {
 
                         if (!xSpeedWasModifiedToSlideIntoLedge) {
                             if (speed.x < 0) {
-                                speed.x = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                                speed.x = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y) * slideFriction;
 
                                 if (moveToPostition.x > position.x + speed.x)
                                     speed.x = moveToPostition.x - position.x;
                             } else {
-                                speed.x = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                                speed.x = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y) * slideFriction;
 
                                 if (moveToPostition.x < position.x + speed.x)
                                     speed.x = moveToPostition.x - position.x;
@@ -453,12 +455,12 @@ public class Sprite extends AbstractSprite {
                         } else if (!ySpeedWasModifiedToSlideIntoLedge) {
 
                             if (speed.y < 0) {
-                                speed.y = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                                speed.y = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y) * slideFriction;
 
                                 if (moveToPostition.y > position.y + speed.y)
                                     speed.y = moveToPostition.y - position.y;
                             } else {
-                                speed.y = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                                speed.y = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y) * slideFriction;
 
                                 if (moveToPostition.y < position.y + speed.y)
                                     speed.y = moveToPostition.y - position.y;
@@ -526,6 +528,11 @@ public class Sprite extends AbstractSprite {
     public void SetBounceAtude(float BounceAtude)
     {
         bounceAtude = BounceAtude;
+    }
+
+    public void SetSlideFriction(float  SlideFriction)
+    {
+         slideFriction = SlideFriction;
     }
 
 }

@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Sample to cover using Input!
-
     //private int mActivePointerId;
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -105,9 +104,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case (MotionEvent.ACTION_UP):
                 //Log.d("input", "Action was Up");
+                gameCanvas.TouchUp(event.getX(), event.getY());
                 break;
             case (MotionEvent.ACTION_MOVE):
                 //Log.d("input", "Action was MOVE");
+                gameCanvas.TouchMove(event.getX(), event.getY());
                 break;
 
 //            case (MotionEvent.AXIS_X) :
@@ -145,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         return  true;
     }
 
-
     private void MakeFullScreen()
     {
         getWindow().getDecorView().setSystemUiVisibility(
@@ -156,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
-
 
     private void GameThreadUpdate(long deltaTime)
     {
