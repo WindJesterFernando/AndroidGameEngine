@@ -25,6 +25,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     AStarMap aStarMap;
 
+    AStarMap2 aStarMap2;
+
     public GameCanvas(Context Context, int screenLength, int screenHeight) {
         super(Context);
 
@@ -62,8 +64,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         //lookAtAvatar.SetScale(new Vectror2(0.33f, 0.33f));
         avatar.SetScale(new Vectror2(0.33f, 0.33f));
+        avatar.SetCollisionResponseAction(CollisionResponseActions.BounceOffOf);
+        avatar.SetBounceAtude(30);
 
         //aStarMap = new AStarMap();
+
+        aStarMap2 = new AStarMap2();
 
     }
 
@@ -111,6 +117,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         if(aStarMap != null)
             aStarMap.Draw(canvas);
+
+        if(aStarMap2 != null)
+            aStarMap2.Draw(canvas);
 
     }
 
@@ -249,6 +258,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         if(aStarMap != null)
             aStarMap.ProcessNextMove();
+
+        if(aStarMap2 != null)
+            aStarMap2.ScreenTouched();
 
     }
 

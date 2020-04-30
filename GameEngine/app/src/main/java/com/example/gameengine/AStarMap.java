@@ -49,20 +49,20 @@ public class AStarMap {
 
 
 
-//        //Debug testing
+////        //Debug testing
         for(int i = 1; i < xTiles; i++)
             map[i][4].MakeWall();
 
         for(int i = yTiles-1; i > 5; i--)
             map[2][i].MakeWall();
-
-        for(int i = 0; i < xTiles-1; i++)
-            map[i][2].MakeWall();
-
-        map[3][yTiles - 5].MakeWall();
-        map[4][yTiles - 5].MakeWall();
-        map[4][yTiles - 3].MakeWall();
-        map[5][yTiles - 3].MakeWall();
+//
+//        for(int i = 0; i < xTiles-1; i++)
+//            map[i][2].MakeWall();
+//
+//        map[3][yTiles - 5].MakeWall();
+//        map[4][yTiles - 5].MakeWall();
+//        map[4][yTiles - 3].MakeWall();
+//        map[5][yTiles - 3].MakeWall();
 
 
 

@@ -39,8 +39,12 @@ public class Sprite extends AbstractSprite {
 
     private Vectror2 speed;
 
-    public Sprite(Bitmap SpriteSheet, int numberOfFramesX, int numberOfFramesY, int xFrame, int yFrame)
-    {
+    private int collisionResponseAction;
+
+    private float bounceAtude = 30;
+    private Vectror2 bounceEffect;
+
+    public Sprite(Bitmap SpriteSheet, int numberOfFramesX, int numberOfFramesY, int xFrame, int yFrame) {
         super(0);
 
         spriteSheet = SpriteSheet;
@@ -48,74 +52,64 @@ public class Sprite extends AbstractSprite {
         frameSizeX = spriteSheet.getWidth() / numberOfFramesX;
         frameSizeY = spriteSheet.getHeight() / numberOfFramesY;
 
-        scale = new Vectror2(1,1);
+        scale = new Vectror2(1, 1);
         //Log.d("Sprite", "sizeX " + frameSizeX + ", sizeY " + frameSizeY);
 
         SetFrame(xFrame, yFrame);
 
-        destRect = new Rect(0,0, 600, 600);
+        destRect = new Rect(0, 0, 600, 600);
 
     }
 
-    public void SetFrame(int x, int y)
-    {
+    public void SetFrame(int x, int y) {
         srcRect = new Rect(frameSizeX * x, frameSizeY * y, frameSizeX * (x + 1), frameSizeY * (y + 1));
 //
 //        Log.d("Sprite", "" + srcRect);
 //        Log.d("Sprite", "sizeX " + frameSizeX + ", sizeY " + frameSizeY);
     }
 
-    public void SetPostion(Vectror2 Postion)
-    {
+    public void SetPostion(Vectror2 Postion) {
         position = Postion;
         RefreshDestinationRect();
         //Log.d("test", "test " + postion.toString());
     }
 
-    public void SetScale(Vectror2 Scale)
-    {
+    public void SetScale(Vectror2 Scale) {
         scale = Scale;
         RefreshDestinationRect();
     }
 
-    private void RefreshDestinationRect()
-    {
-        destRect = new Rect((int)position.x - (int)(frameSizeX / 2f * scale.x), (int)position.y - (int)(frameSizeY / 2f * scale.y), (int)position.x + (int)(frameSizeX / 2f * scale.x), (int)position.y + (int)(frameSizeY / 2f * scale.y));
+    private void RefreshDestinationRect() {
+        destRect = new Rect((int) position.x - (int) (frameSizeX / 2f * scale.x), (int) position.y - (int) (frameSizeY / 2f * scale.y), (int) position.x + (int) (frameSizeX / 2f * scale.x), (int) position.y + (int) (frameSizeY / 2f * scale.y));
     }
 
-    public Bitmap GetSpriteSheet()
-    {
-        return  spriteSheet;
+    public Bitmap GetSpriteSheet() {
+        return spriteSheet;
     }
 
-    public Rect GetSourceRect()
-    {
+    public Rect GetSourceRect() {
         return srcRect;
     }
 
-    public Rect GetDestinationRect()
-    {
+    public Rect GetDestinationRect() {
         return destRect;
     }
 
-    public Vectror2 GetPosition()
-    {
+    public Vectror2 GetPosition() {
         return position;
     }
 
     @Override
-    public void Update(long deltaTime)
-    {
+    public void Update(long deltaTime) {
 
         //Log.d("lerp", "deltaTime = " + deltaTime);
 
-        if(lerpTimeCurrent < lerpTime)
-        {
+        if (lerpTimeCurrent < lerpTime) {
             lerpTimeCurrent += deltaTime;
             float amount = (float) lerpTimeCurrent / (float) lerpTime;
-            if(amount > 1)
+            if (amount > 1)
                 amount = 1;
-            else if(amount < 0)
+            else if (amount < 0)
                 amount = 0;
 
             //Log.d("lerp", "amount = " + amount);
@@ -125,12 +119,12 @@ public class Sprite extends AbstractSprite {
             //Log.d("lerp", "difference = " + difference.ToString());
 
             double hyp = Math.sqrt(difference.x * difference.x + difference.y * difference.y);
-            Vectror2 normalizeVec = new Vectror2(difference.x / (float)hyp, difference.y / (float)hyp);
+            Vectror2 normalizeVec = new Vectror2(difference.x / (float) hyp, difference.y / (float) hyp);
 
             //Log.d("lerp", "hyp = " + hyp);
             //Log.d("lerp", "normalizeVec = " + normalizeVec.ToString());
 
-            Vectror2 newPos = new Vectror2(lerpStart.x + normalizeVec.x * amount * (float) hyp, lerpStart.y + normalizeVec.y * amount * (float)hyp);
+            Vectror2 newPos = new Vectror2(lerpStart.x + normalizeVec.x * amount * (float) hyp, lerpStart.y + normalizeVec.y * amount * (float) hyp);
             //Log.d("lerp", "newPos = " + newPos.ToString());
 
 
@@ -139,19 +133,18 @@ public class Sprite extends AbstractSprite {
 
         }
 
-        if(moveToPostition != null)
-        {
+        if (moveToPostition != null) {
 
             Vectror2 difference = new Vectror2(moveToPostition.x - position.x, moveToPostition.y - position.y);
 
             double hyp = Math.sqrt(difference.x * difference.x + difference.y * difference.y);
-            Vectror2 normalizeVec = new Vectror2(difference.x / (float)hyp, difference.y / (float)hyp);
+            Vectror2 normalizeVec = new Vectror2(difference.x / (float) hyp, difference.y / (float) hyp);
 
             Vectror2 moveAmount = new Vectror2(normalizeVec.x * moveToSpeed, normalizeVec.y * moveToSpeed);
 
             Vectror2 newPos = new Vectror2(position.x + moveAmount.x, position.y + moveAmount.y);
 
-            if(hyp < moveToSpeed) {
+            if (hyp < moveToSpeed) {
                 newPos = moveToPostition;
                 moveToPostition = null;
             }
@@ -162,51 +155,56 @@ public class Sprite extends AbstractSprite {
 
         }
 
+        if (bounceEffect != null) {
+            if (speed == null)
+                speed = new Vectror2(bounceEffect.x, bounceEffect.y);
+            else {
+                speed.x += bounceEffect.x;
+                speed.y += bounceEffect.y;
+            }
+
+            bounceEffect.x *= 0.9f;
+            bounceEffect.y *= 0.9f;
+        }
+
     }
 
-    public void PerformLerp(Vectror2 LerpStart, Vectror2 LerpEnd, long LerpTime)
-    {
+    public void PerformLerp(Vectror2 LerpStart, Vectror2 LerpEnd, long LerpTime) {
         lerpStart = LerpStart;
         lerpEnd = LerpEnd;
         lerpTime = LerpTime;
         lerpTimeCurrent = 0;
     }
 
-    public void PerformMoveTo(Vectror2 MoveTo, float Speed)
-    {
+    public void PerformMoveTo(Vectror2 MoveTo, float Speed) {
         moveToPostition = MoveTo;
         moveToSpeed = Speed;
     }
 
     @Override
-    public void Draw(Canvas canvas)
-    {
+    public void Draw(Canvas canvas) {
 
-        if(rotation != 0) {
+        if (rotation != 0) {
             canvas.save();//Saving the canvas and later restoring it so only this image will be rotated.
             canvas.rotate(rotation, position.x, position.y);
 
             canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
 
             canvas.restore();
-        }
-        else
+        } else
             canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
     }
 
-    public void SetRotation(float Rotation)
-    {
+    public void SetRotation(float Rotation) {
         rotation = Rotation;
     }
 
-    public float GetRotation()
-    {
+    public float GetRotation() {
         return rotation;
     }
 
     @Override
-    public void SetColor(int colorConstant)
-    {
+    public void SetColor(int colorConstant) {
 
         ColorFilter filter = new LightingColorFilter(colorConstant, 1);
         paint.setColorFilter(filter);
@@ -222,15 +220,13 @@ public class Sprite extends AbstractSprite {
     }
 
     @Override
-    public int GetBottomPosition()
-    {
-        return (int)(position.y + (float) frameSizeY * scale.y / 2f);
+    public int GetBottomPosition() {
+        return (int) (position.y + (float) frameSizeY * scale.y / 2f);
     }
 
-    public boolean CheckForCircleCollision(Sprite spr)
-    {
+    public boolean CheckForCircleCollision(Sprite spr) {
 
-        if(!checkCircleCollisionDetection)
+        if (!checkCircleCollisionDetection)
             return false;
 
         float xDif = spr.GetPosition().x - position.x;
@@ -238,9 +234,8 @@ public class Sprite extends AbstractSprite {
 
         double hyp = Math.sqrt(xDif * xDif + yDif * yDif);
 
-        if(radius + spr.GetRadiusForCicleCollisionDetection() > hyp)
-        {
-            Log.d("Collision","Circle Detected");
+        if (radius + spr.GetRadiusForCicleCollisionDetection() > hyp) {
+            Log.d("Collision", "Circle Detected");
             speed = null;
             return true;
         }
@@ -248,26 +243,23 @@ public class Sprite extends AbstractSprite {
         return false;
     }
 
-    public float GetRadiusForCicleCollisionDetection()
-    {
+    public float GetRadiusForCicleCollisionDetection() {
         return radius;
     }
 
-    public void SetRadiusForCicleCollisionDetection(float Radius)
-    {
+    public void SetRadiusForCicleCollisionDetection(float Radius) {
         radius = Radius;
         checkCircleCollisionDetection = true;
     }
 
-    public void SetForBoundingBoxCollisionDetection()
-    {
+    public void SetForBoundingBoxCollisionDetection() {
         checkBoundingBoxCollisionDetection = true;
     }
 
     public boolean CheckForBoundingBoxCollision(Sprite spr)//, boolean manageSpeed)
     {
 
-        if(!checkBoundingBoxCollisionDetection)
+        if (!checkBoundingBoxCollisionDetection)
             return false;
 
         boolean xColLeftWithSpeed = false, xColRightWithSpeed = false;
@@ -277,17 +269,15 @@ public class Sprite extends AbstractSprite {
         boolean yColTop = false, yColBottom = false;
 
         Vectror2 unModifiedSpeed = null;
-        if(speed != null)
+        if (speed != null)
             unModifiedSpeed = new Vectror2(speed.x, speed.y);
         boolean xSpeedWasModifiedToSlideIntoLedge = false, ySpeedWasModifiedToSlideIntoLedge = false;
 
         Vectror2 posWithSpeed;
 
-        if(speed != null)
-        {
+        if (speed != null) {
             posWithSpeed = new Vectror2(position.x + speed.x, position.y + speed.y);
-        }
-        else
+        } else
             posWithSpeed = position;
 
         float x1 = spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
@@ -303,7 +293,6 @@ public class Sprite extends AbstractSprite {
             xColLeftWithSpeed = true;
 
 
-
         x1 = spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
         x2 = spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
 
@@ -315,10 +304,6 @@ public class Sprite extends AbstractSprite {
 
         if (x2 > ox1 && x2 < ox2)
             xColLeft = true;
-
-
-
-
 
 
         float y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
@@ -334,8 +319,6 @@ public class Sprite extends AbstractSprite {
             yColTopWithSpeed = true;
 
 
-
-
         y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
         y2 = spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
 
@@ -349,147 +332,137 @@ public class Sprite extends AbstractSprite {
             yColTop = true;
 
 
-
-
-        if((xColLeftWithSpeed || xColRightWithSpeed) && (yColBottomWithSpeed || yColTopWithSpeed))
-        {
+        if ((xColLeftWithSpeed || xColRightWithSpeed) && (yColBottomWithSpeed || yColTopWithSpeed)) {
             //Log.d("Collision","Bounding Box Detected");
 
             //WE NEED: Where the collision is, and by how much
 
-            //speed = null;
+
+            if (collisionResponseAction == CollisionResponseActions.HoldInPlace)
+                speed = null;
             //speed.y = 0;
             //speed.x = 0;
 
-            if(speed != null) {
-                if (xColRightWithSpeed) {
+            if (collisionResponseAction == CollisionResponseActions.BounceOffOf) {
 
-                    if(xColRight)
-                        ;//speed.x = 0;
-                    else {
-                        float suggestedNewSpeed = (spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x + (frameSizeX / 2f * scale.x));
+                speed = null;
 
-                        if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)){//if (speed.x > suggestedNewSpeed) {
-                            if (Math.abs(suggestedNewSpeed) > 10) {
-                                Log.d("collsion", tag + " Right");
-
-                                Log.d("collision", "left of other sprite is " + (spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x)));
-                                Log.d("collision", "right of this sprite is " + (position.x + (frameSizeX / 2f * scale.x)));
-
-                                Log.d("Collision", "Changing Speed from " + speed.x + " to " + suggestedNewSpeed);
-                            }
-                            speed.x = suggestedNewSpeed;
-                            xSpeedWasModifiedToSlideIntoLedge = true;
-                        }
-                    }
-
+                bounceEffect = new Vectror2(0, 0);
+                if(xColRightWithSpeed && !xColRight) {
+                    //Log.d("Collision", "Bouncing off the right, to the left");
+                    bounceEffect.x = -bounceAtude;
                 }
-                if (xColLeftWithSpeed)
+                if(xColLeftWithSpeed && !xColLeft){
+                    //Log.d("Collision", "Bouncing off the left side, to the right");
+                    bounceEffect.x = bounceAtude;
+                }
+                if(yColTopWithSpeed && !yColTop){
+                    //Log.d("Collision", "Bouncing off the top, to the bottom");
+                    bounceEffect.y = bounceAtude;
+                }
+                if(yColBottomWithSpeed && !yColBottom)
                 {
-
-                    if(xColLeft)
-                        ;//speed.x = 0;
-                    else {
-
-                        float suggestedNewSpeed = (spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x - (frameSizeX / 2f * scale.x));
-
-                        if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)){//if (speed.x < suggestedNewSpeed) {
-                            if (Math.abs(suggestedNewSpeed) > 10) {
-                                Log.d("collsion", tag + " Left");
-
-
-                                Log.d("collision", "right of other sprite is " + (spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x)));
-                                Log.d("collision", "left of this sprite is " + (position.x - (frameSizeX / 2f * scale.x)));
-                                Log.d("Collision", "Changing Speed from " + speed.x + " to " + suggestedNewSpeed);
-                            }
-                            speed.x = suggestedNewSpeed;
-                            xSpeedWasModifiedToSlideIntoLedge = true;
-                        }
-                    }
-
+                    //Log.d("Collision", "Bouncing off the bottom, to the top");
+                    bounceEffect.y = -bounceAtude;
                 }
-                if (yColTopWithSpeed)
-                {
 
-                    if (yColTop)
-                        ;//speed.y = 0;
-                    else {
 
-                        float suggestedNewSpeed = (spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y - (frameSizeY / 2f * scale.y));
 
-                        if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)){//if (speed.y < suggestedNewSpeed) {
-                            if (Math.abs(suggestedNewSpeed) > 10) {
-
-                                Log.d("collsion", tag + " Top");
-
-                                Log.d("collision", "bottom of other sprite is " + (spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y)));
-                                Log.d("collision", "top of this sprite is " + (position.y - (frameSizeY / 2f * scale.y)));
-
-                                Log.d("Collision", "Changing Speed from " + speed.y + " to " + suggestedNewSpeed);
-
-                            }
-                            speed.y = suggestedNewSpeed;
-                            ySpeedWasModifiedToSlideIntoLedge = true;
-                        }
-                    }
-
-                }
-                if (yColBottomWithSpeed )
-                {
-
-                    if (yColBottom)
-                        ;//speed.y = 0;
-                    else {
-
-                        float suggestedNewSpeed = (spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y + (frameSizeY / 2f * scale.y));
-
-                        if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)) {
-                            if (Math.abs(suggestedNewSpeed) > 10) {
-
-                                Log.d("collsion", tag + " Bottom");
-
-                                Log.d("collision", "top of other sprite is " + (spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y)));
-                                Log.d("collision", "bottom of this sprite is " + (position.y + (frameSizeY / 2f * scale.y)));
-
-                                Log.d("Collision", "Changing Speed from " + speed.y + " to " + suggestedNewSpeed);
-                            }
-                            speed.y = suggestedNewSpeed;
-                            ySpeedWasModifiedToSlideIntoLedge = true;
-
-                        }
-                    }
-                }
             }
 
-            if(speed != null) {
-                if (speed.x != unModifiedSpeed.x || speed.y != unModifiedSpeed.y) {
 
-                    if (!xSpeedWasModifiedToSlideIntoLedge) {
-                        if(speed.x < 0) {
-                            speed.x = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+            if (collisionResponseAction == CollisionResponseActions.SlideAlong) {
 
-                            if(moveToPostition.x > position.x + speed.x)
-                                speed.x = moveToPostition.x - position.x;
-                        }
+                if (speed != null) {
+                    if (xColRightWithSpeed) {
+
+                        if (xColRight)
+                            ;//speed.x = 0;
                         else {
-                            speed.x = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                            float suggestedNewSpeed = (spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x + (frameSizeX / 2f * scale.x));
 
-                            if(moveToPostition.x < position.x + speed.x)
-                                speed.x = moveToPostition.x - position.x;
+                            if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)) {
+                                speed.x = suggestedNewSpeed;
+                                xSpeedWasModifiedToSlideIntoLedge = true;
+                            }
                         }
-                    } else if (!ySpeedWasModifiedToSlideIntoLedge) {
 
-                        if(speed.y < 0) {
-                            speed.y = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+                    }
+                    if (xColLeftWithSpeed) {
 
-                            if(moveToPostition.y > position.y + speed.y)
-                                speed.y = moveToPostition.y - position.y;
-                        }
+                        if (xColLeft)
+                            ;//speed.x = 0;
                         else {
-                            speed.y = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
 
-                            if(moveToPostition.y < position.y + speed.y)
-                                speed.y = moveToPostition.y - position.y;
+                            float suggestedNewSpeed = (spr.GetPosition().x + (spr.GetFrameSizeX() / 2f * spr.GetScale().x)) - (position.x - (frameSizeX / 2f * scale.x));
+
+                            if (Math.abs(speed.x) >= Math.abs(suggestedNewSpeed)) {
+                                speed.x = suggestedNewSpeed;
+                                xSpeedWasModifiedToSlideIntoLedge = true;
+                            }
+                        }
+
+                    }
+                    if (yColTopWithSpeed) {
+
+                        if (yColTop)
+                            ;//speed.y = 0;
+                        else {
+
+                            float suggestedNewSpeed = (spr.GetPosition().y + (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y - (frameSizeY / 2f * scale.y));
+
+                            if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)) {
+                                speed.y = suggestedNewSpeed;
+                                ySpeedWasModifiedToSlideIntoLedge = true;
+                            }
+                        }
+
+                    }
+                    if (yColBottomWithSpeed) {
+
+                        if (yColBottom)
+                            ;//speed.y = 0;
+                        else {
+
+                            float suggestedNewSpeed = (spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y)) - (position.y + (frameSizeY / 2f * scale.y));
+
+                            if (Math.abs(speed.y) >= Math.abs(suggestedNewSpeed)) {
+                                speed.y = suggestedNewSpeed;
+                                ySpeedWasModifiedToSlideIntoLedge = true;
+                            }
+                        }
+                    }
+                }
+
+
+                if (speed != null) {
+                    if (speed.x != unModifiedSpeed.x || speed.y != unModifiedSpeed.y) {
+
+                        if (!xSpeedWasModifiedToSlideIntoLedge) {
+                            if (speed.x < 0) {
+                                speed.x = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                                if (moveToPostition.x > position.x + speed.x)
+                                    speed.x = moveToPostition.x - position.x;
+                            } else {
+                                speed.x = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                                if (moveToPostition.x < position.x + speed.x)
+                                    speed.x = moveToPostition.x - position.x;
+                            }
+                        } else if (!ySpeedWasModifiedToSlideIntoLedge) {
+
+                            if (speed.y < 0) {
+                                speed.y = -(float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                                if (moveToPostition.y > position.y + speed.y)
+                                    speed.y = moveToPostition.y - position.y;
+                            } else {
+                                speed.y = (float) Math.sqrt(unModifiedSpeed.x * unModifiedSpeed.x + unModifiedSpeed.y * unModifiedSpeed.y);
+
+                                if (moveToPostition.y < position.y + speed.y)
+                                    speed.y = moveToPostition.y - position.y;
+                            }
                         }
                     }
                 }
@@ -500,27 +473,22 @@ public class Sprite extends AbstractSprite {
         }
 
 
-
         return false;
     }
 
-    public Vectror2 GetScale()
-    {
+    public Vectror2 GetScale() {
         return scale;
     }
 
-    public int GetFrameSizeX()
-    {
+    public int GetFrameSizeX() {
         return frameSizeX;
     }
 
-    public int GetFrameSizeY()
-    {
+    public int GetFrameSizeY() {
         return frameSizeY;
     }
 
-    public void SetRotationToLookAtSprite(Sprite sprToLookAt)
-    {
+    public void SetRotationToLookAtSprite(Sprite sprToLookAt) {
 
         float xDif = sprToLookAt.GetPosition().x - position.x;
         float yDif = sprToLookAt.GetPosition().y - position.y;
@@ -541,14 +509,23 @@ public class Sprite extends AbstractSprite {
 //        return speed;
 //    }
 
-    public void ApplySpeedToPosition()
-    {
+    public void ApplySpeedToPosition() {
 
-        if(speed != null) {
+        if (speed != null) {
             //Log.d("speed test", "" + speed);
             SetPostion(new Vectror2(speed.x + position.x, speed.y + position.y));
         }
         speed = null;
+
+    }
+
+    public void SetCollisionResponseAction(int CollisionResponseAction) {
+        collisionResponseAction = CollisionResponseAction;
+    }
+
+    public void SetBounceAtude(float BounceAtude)
+    {
+        bounceAtude = BounceAtude;
     }
 
 }
