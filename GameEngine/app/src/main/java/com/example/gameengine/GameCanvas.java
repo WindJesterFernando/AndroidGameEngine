@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.DebugUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -30,6 +31,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     LineSprite inputLine;
 
     TouchTracker touchTracker;
+
+    AbstractScene currentScene;
+    BattleScene battleScene;
+    TitleScene titleScene;
+    AdventureScene adventureScene;
+
 
     public GameCanvas(Context Context, int screenLength, int screenHeight) {
         super(Context);
@@ -77,6 +84,13 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         //aStarMap2 = new AStarMap2();
 
+        //AbstractScene currentScene;
+        battleScene = new BattleScene();
+        titleScene = new TitleScene();
+        adventureScene = new AdventureScene();
+
+        currentScene = battleScene;
+
     }
 
     @Override
@@ -102,24 +116,24 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Color.BLUE);
 
 
-//        for (int layer = 0 ; layer <= Constants.NumberOfLayers ; layer++) {
-//
-//            for (AbstractSprite s : sprites) {
-//                if(s.GetOrderInDrawLayer() == layer)
-//                    s.Draw(canvas);
-//            }
-//
-//            if(layer == Constants.StageSpriteLayer)
-//            {
-//                for (AbstractSprite s : onStageSprites) {
-//                        s.Draw(canvas);
-//                }
-//            }
-//
-//        }
+        for (int layer = 0 ; layer <= Constants.NumberOfLayers ; layer++) {
+
+            for (AbstractSprite s : sprites) {
+                if(s.GetOrderInDrawLayer() == layer)
+                    s.Draw(canvas);
+            }
+
+            if(layer == Constants.StageSpriteLayer)
+            {
+                for (AbstractSprite s : onStageSprites) {
+                        s.Draw(canvas);
+                }
+            }
+
+        }
 
         if(aStarMap != null)
             aStarMap.Draw(canvas);
@@ -131,22 +145,25 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             inputLine.Draw(canvas);
 
 
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
+//        Paint paint = new Paint();
+//        paint.setColor(Color.WHITE);
+//
+//
+//
+//        if(touchTracker != null)
+//        {
+//            for(Vectror2 p: touchTracker.movingPosition)
+//                canvas.drawPoint(p.x, p.y, paint);
+//        }
 
 
 
-        if(touchTracker != null)
-        {
-            for(Vectror2 p: touchTracker.movingPosition)
-                canvas.drawPoint(p.x, p.y, paint);
-        }
 //
 //        for (int i = 0; i < 200 ; i++)
 //            canvas.drawPoint(100 + i, 400, paint);
-
-
-
+//
+//
+//
 //        float radius = 300;
 //        Vectror2 centerPoint = new Vectror2(500, 400);
 //        LinkedList<Vectror2> circlePoints = new LinkedList<Vectror2>();
@@ -166,38 +183,41 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 //        }
 
 
-        Paint paint4 = new Paint();
-        paint4.setColor(Color.GRAY);
+
+        //Debug For Circle Gestures
+
+//        Paint paint4 = new Paint();
+//        paint4.setColor(Color.GRAY);
+//
+//
+//        canvas.drawCircle(500, 400,300f*1.5f, paint4);
+//
+//        LinkedList<Vectror2> circlePoints = GetCirclePoints(300f, new Vectror2(500, 400), true, false, 12);
+//
+//
+//        Paint paint2 = new Paint();
+//        paint2.setColor(Color.RED);
+//
+//        Paint paint3 = new Paint();
+//        paint3.setColor(Color.BLUE);
+//
+//        int count = 0;
+//        for(Vectror2 p: circlePoints) {
+//            //canvas.drawPoint(p.x, p.y, paint);
+//            if(count == 0)
+//            canvas.drawCircle(p.x, p.y,100, paint2);
+//            else if(count == 1)
+//                canvas.drawCircle(p.x, p.y,100, paint3);
+//            else
+//                canvas.drawCircle(p.x, p.y,100, paint);
+//
+//            count++;
+//        }
+//
+//        canvas.drawCircle(500, 400,300f/2f, paint);
 
 
-        canvas.drawCircle(500, 400,300f*1.5f, paint4);
-
-        LinkedList<Vectror2> circlePoints = GetCirclePoints(300f, new Vectror2(500, 400), true, false, 12);
-
-
-        Paint paint2 = new Paint();
-        paint2.setColor(Color.RED);
-
-        Paint paint3 = new Paint();
-        paint3.setColor(Color.BLUE);
-
-        int count = 0;
-        for(Vectror2 p: circlePoints) {
-            //canvas.drawPoint(p.x, p.y, paint);
-            if(count == 0)
-            canvas.drawCircle(p.x, p.y,50, paint2);
-            else if(count == 1)
-                canvas.drawCircle(p.x, p.y,50, paint3);
-            else
-                canvas.drawCircle(p.x, p.y,50, paint);
-
-            count++;
-        }
-
-        canvas.drawCircle(500, 400,300f/2f, paint);
-
-
-
+        currentScene.Draw(canvas);
 
     }
 
@@ -316,6 +336,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
+        currentScene.Update(deltaTime);
+
         //lookAtAvatar.SetRotationToLookAtSprite(avatar);
 
         //avatar.SetRotation(avatar.GetRotation() + (0.25f * (float)deltaTime));
@@ -347,6 +369,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         touchTracker = new TouchTracker();
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
 
+        currentScene.TouchDown(x,y);
+
     }
 
     public void TouchMove(float x, float y)
@@ -355,6 +379,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         inputLine.bottomRight = new Vectror2(x, y);
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
+
+        currentScene.TouchMove(x,y);
     }
 
     public void TouchUp(float x, float y)
@@ -364,13 +390,23 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         sprites.addLast(inputLine);
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
         EvaluateTouchTrackerForGestures();
+
+        currentScene.TouchUp(x,y);
     }
 
     private void EvaluateTouchTrackerForGestures()
     {
 
 
-        CheckForCircleTouchInput();
+        if(CheckForCircleTouchInput(CircleID.LargeCircle))
+            CircleGesture(CircleID.LargeCircle);
+        if(CheckForCircleTouchInput(CircleID.LargeCircleUpwards))
+            CircleGesture(CircleID.LargeCircleUpwards);
+
+        if(CheckForCircleTouchInput(CircleID.SmallCircle))
+            CircleGesture(CircleID.SmallCircle);
+        if(CheckForCircleTouchInput(CircleID.SmallCircleUpwards))
+            CircleGesture(CircleID.SmallCircleUpwards);
 
 
 
@@ -442,53 +478,116 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-
-
     public void SwipeUp()
     {
         inputLine.SetColor(Color.RED);
+        currentScene.SwipeUp();
     }
     public void SwipeUpRight()
     {
         inputLine.SetColor(Color.GREEN);
+        currentScene.SwipeUpRight();
     }
     public void SwipeRight()
     {
         inputLine.SetColor(Color.BLACK);
+        currentScene.SwipeRight();
     }
     public void SwipeDownRight()
     {
         inputLine.SetColor(Color.CYAN);
+        currentScene.SwipeDownRight();
     }
     public void SwipeDown()
     {
         inputLine.SetColor(Color.WHITE);
+        currentScene.SwipeDown();
     }
     public void SwipeDownLeft()
     {
         inputLine.SetColor(Color.YELLOW);
+        currentScene.SwipeDownLeft();
     }
     public void SwipeLeft()
     {
         inputLine.SetColor(Color.MAGENTA);
+        currentScene.SwipeLeft();
     }
     public void SwipeUpLeft()
     {
         inputLine.SetColor(Color.DKGRAY);
+        currentScene.SwipeUpLeft();
     }
 
-    private boolean CheckForCircleTouchInput()
+    public void CircleGesture(int circleID)
     {
+        if(circleID == CircleID.LargeCircle)
+            Log.d("Gesture", "--LargeCircleDetected--");
+        else if(circleID == CircleID.LargeCircleUpwards)
+            Log.d("Gesture", "--LargeCircleUpwardsDetected--");
+        else if(circleID == CircleID.SmallCircle)
+            Log.d("Gesture", "--SmallCircleDetected--");
+        else if(circleID == CircleID.SmallCircleUpwards)
+            Log.d("Gesture", "--SmallCircleUpwardsDetected--");
+
+        currentScene.CircleGesture(circleID);
+    }
+
+    private boolean CheckForCircleTouchInput(int circleID)
+    {
+
+        //Log.d("Gesture", "Starting Circle Gesture Check " + circleID);
+
 
         //touchTracker.movingPosition
 
-        float radius = 300f;
-        Vectror2 centerPoint = new Vectror2(500, 400);
+        float bottomMostPoint = 0;
+        float topMostPoint = 99999;
 
-        LinkedList<Vectror2> circlePoints = GetCirclePoints(radius, centerPoint, true, false, 12);
+        float rightMostPos = 0;
+        float leftMostPos = 9999;
+
+        for (Vectror2 v: touchTracker.movingPosition)
+        {
+            if(v.y > bottomMostPoint)
+                bottomMostPoint = v.y;
+            if(v.y < topMostPoint)
+                topMostPoint = v.y;
+
+            if(rightMostPos < v.x)
+                rightMostPos = v.x;
+            if(leftMostPos > v.x)
+                leftMostPos = v.x;
+        }
+
+
+        float radius = 300f;
+        Vectror2 centerPoint = null;
+
+        if(circleID == CircleID.SmallCircleUpwards || circleID == CircleID.SmallCircle)
+            radius = 150f;
+
+        if(circleID == CircleID.LargeCircle || circleID == CircleID.SmallCircle)
+            centerPoint = new Vectror2(touchTracker.movingPosition.getFirst().x, (touchTracker.movingPosition.getFirst().y + bottomMostPoint) /2);
+        else if(circleID == CircleID.LargeCircleUpwards || circleID == CircleID.SmallCircleUpwards)
+            centerPoint = new Vectror2(touchTracker.movingPosition.getFirst().x, (touchTracker.movingPosition.getFirst().y + topMostPoint) /2);
+
+//        if(circleID == CircleID.LargeCircle ||circleID == CircleID.LargeCircleUpwards)
+//            radius = 300f;
+//        else if(circleID == CircleID.SmallCircle ||circleID == CircleID.SmallCircleUpwards)
+//            radius = 150f;
+
+        //= new Vectror2((leftMostPos + rightMostPos) /2, (touchTracker.movingPosition.getFirst().y + bottomMostPoint) /2); //new Vectror2(500, 400);
+        //centerPoint = new Vectror2(500, 400);
+
+        //Log.d("Gesture", "centerPoint = " + centerPoint.ToString());
+
+        boolean isUpwards = (circleID == CircleID.SmallCircleUpwards || circleID == CircleID.LargeCircleUpwards);
+
+        LinkedList<Vectror2> circlePoints = GetCirclePoints(radius, centerPoint, true, isUpwards, 12);
 
         boolean isComplete = true;
-        boolean found;
+        boolean found = false;
 
         for (Vectror2 circlePoint: circlePoints)
         {
@@ -500,18 +599,17 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
                 float distY = circlePoint.y - touchPoint.y;
                 double hyp = Math.sqrt(distX * distX + distY * distY);
 
-                if(hyp < 50)
+                if(hyp < radius/3f)
                     found = true;
             }
 
             if(!found) {
                 isComplete = false;
-
             }
         }
 
-
-
+//        if(found)
+//            Log.d("Gesture", "initial circle found");
 
         for (Vectror2 touchPoint: touchTracker.movingPosition)
         {
@@ -525,14 +623,14 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
             if(hyp < radius/2f)
             {
-                Log.d("Gesture", "Center of circle violated");
+                //Log.d("Gesture", "Center of circle violated");
                 isComplete = false;
             }
 
 
             if(hyp > radius * 1.5f)
             {
-                Log.d("Gesture", "Outside of circle violated");
+                //Log.d("Gesture", "Outside of circle violated");
                 isComplete = false;
             }
 
@@ -540,11 +638,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-
-        if(isComplete)
-            Log.d("Gesture", "circle detected");
-        else
-            Log.d("Gesture", "circle NOT detected");
+        if(isComplete) {
+            //Log.d("Gesture", "circle detected");
+            return true;
+        }
+        //else
+            //Log.d("Gesture", "circle NOT detected");
 
 
 
