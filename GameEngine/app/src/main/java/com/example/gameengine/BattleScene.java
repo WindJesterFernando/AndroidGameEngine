@@ -5,9 +5,13 @@ import android.util.Log;
 
 public class BattleScene extends AbstractScene {
 
+    public BattleScene(GameCanvas GameCanvas) {
+        super(GameCanvas);
+    }
+
     @Override
     public void Draw(Canvas canvas) {
-
+        Log.d("Scene", "Battle being drawn");
     }
 
     @Override

@@ -12,7 +12,21 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Canvas;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.Stack;
 
 public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -32,11 +46,14 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     TouchTracker touchTracker;
 
-    AbstractScene currentScene;
+    //AbstractScene currentScene;
     BattleScene battleScene;
     TitleScene titleScene;
     AdventureScene adventureScene;
+    DialogScene dialogScene;
+    InventoryScene inventoryScene;
 
+    Stack<Integer> states;
 
     public GameCanvas(Context Context, int screenLength, int screenHeight) {
         super(Context);
@@ -48,20 +65,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         sprites = new LinkedList<AbstractSprite>();
 
-//        AbstractSprite as;
-//
-//        sprites.add(as = ContentLoader.CreateNewSprite(0));
-//        as.SetOrderInLayer(9);
-//        sprites.add(ContentLoader.CreateNewSprite(1));
-//
-//        sprites.add(as = new LineSprite(new Vectror2(0,0), new Vectror2(screenLength, screenHeight)));
-//        as.SetOrderInLayer(8);
-//        sprites.add(new LineSprite(new Vectror2(screenLength,0), new Vectror2(0, screenHeight)));
-//
-//        sprites.add(new TextSprite("Hello World", new Vectror2(100, 100)));
-//
-//        sprites.add(avatar = ContentLoader.CreateNewSprite(2));
-//        avatar.SetOrderInLayer(10);
+
+        //TestLoad();
+        //TestSave();
+
 
 
         onStageSprites = new LinkedList<AbstractSprite>();
@@ -84,12 +91,17 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         //aStarMap2 = new AStarMap2();
 
-        //AbstractScene currentScene;
-        battleScene = new BattleScene();
-        titleScene = new TitleScene();
-        adventureScene = new AdventureScene();
 
-        currentScene = battleScene;
+        states = new Stack<Integer>();
+
+        //AbstractScene currentScene;
+        battleScene = new BattleScene(this);
+        titleScene = new TitleScene(this);
+        adventureScene = new AdventureScene(this);
+        inventoryScene = new InventoryScene(this);
+        dialogScene = new DialogScene(this);
+
+        CreateNewState(GameStates.TitleScene);
 
     }
 
@@ -217,7 +229,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 //        canvas.drawCircle(500, 400,300f/2f, paint);
 
 
-        currentScene.Draw(canvas);
+        //currentScene.Draw(canvas);
+
+        for(Integer state: states)
+        {
+          GetSceneAssociatedWithState(state).Draw(canvas);
+        }
 
     }
 
@@ -336,7 +353,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-        currentScene.Update(deltaTime);
+
+        GetSceneAssociatedWithState(states.peek()).Update(deltaTime);
+
+        //currentScene.Update(deltaTime);
 
         //lookAtAvatar.SetRotationToLookAtSprite(avatar);
 
@@ -369,7 +389,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         touchTracker = new TouchTracker();
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
 
-        currentScene.TouchDown(x,y);
+        GetSceneAssociatedWithState(states.peek()).TouchDown(x,y);
+        //currentScene.;
 
     }
 
@@ -380,7 +401,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         inputLine.bottomRight = new Vectror2(x, y);
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
 
-        currentScene.TouchMove(x,y);
+        GetSceneAssociatedWithState(states.peek()).TouchMove(x,y);
     }
 
     public void TouchUp(float x, float y)
@@ -391,7 +412,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         touchTracker.movingPosition.addLast(new Vectror2(x,y));
         EvaluateTouchTrackerForGestures();
 
-        currentScene.TouchUp(x,y);
+        GetSceneAssociatedWithState(states.peek()).TouchUp(x,y);
     }
 
     private void EvaluateTouchTrackerForGestures()
@@ -481,42 +502,42 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     public void SwipeUp()
     {
         inputLine.SetColor(Color.RED);
-        currentScene.SwipeUp();
+        GetSceneAssociatedWithState(states.peek()).SwipeUp();
     }
     public void SwipeUpRight()
     {
         inputLine.SetColor(Color.GREEN);
-        currentScene.SwipeUpRight();
+        GetSceneAssociatedWithState(states.peek()).SwipeUpRight();
     }
     public void SwipeRight()
     {
         inputLine.SetColor(Color.BLACK);
-        currentScene.SwipeRight();
+        GetSceneAssociatedWithState(states.peek()).SwipeRight();
     }
     public void SwipeDownRight()
     {
         inputLine.SetColor(Color.CYAN);
-        currentScene.SwipeDownRight();
+        GetSceneAssociatedWithState(states.peek()).SwipeDownRight();
     }
     public void SwipeDown()
     {
         inputLine.SetColor(Color.WHITE);
-        currentScene.SwipeDown();
+        GetSceneAssociatedWithState(states.peek()).SwipeDown();
     }
     public void SwipeDownLeft()
     {
         inputLine.SetColor(Color.YELLOW);
-        currentScene.SwipeDownLeft();
+        GetSceneAssociatedWithState(states.peek()).SwipeDownLeft();
     }
     public void SwipeLeft()
     {
         inputLine.SetColor(Color.MAGENTA);
-        currentScene.SwipeLeft();
+        GetSceneAssociatedWithState(states.peek()).SwipeLeft();
     }
     public void SwipeUpLeft()
     {
         inputLine.SetColor(Color.DKGRAY);
-        currentScene.SwipeUpLeft();
+        GetSceneAssociatedWithState(states.peek()).SwipeUpLeft();
     }
 
     public void CircleGesture(int circleID)
@@ -530,7 +551,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         else if(circleID == CircleID.SmallCircleUpwards)
             Log.d("Gesture", "--SmallCircleUpwardsDetected--");
 
-        currentScene.CircleGesture(circleID);
+        GetSceneAssociatedWithState(states.peek()).CircleGesture(circleID);
     }
 
     private boolean CheckForCircleTouchInput(int circleID)
@@ -685,6 +706,87 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         return circlePoints;
 
+
+    }
+
+    public void CreateNewState(int State)
+    {
+        states.push(State);
+        //currentScene = GetSceneAssociatedWithState(State);
+    }
+
+    public void RemoveCurrentState()
+    {
+        states.pop();
+//        if(!states.empty())
+//        {
+//            int State = states.peek();
+//            //currentScene = GetSceneAssociatedWithState(State);
+//        }
+    }
+
+    private AbstractScene GetSceneAssociatedWithState(int State)
+    {
+        if(State == GameStates.TitleScene)
+            return titleScene;
+        else if(State == GameStates.AdventureScene)
+            return adventureScene;
+        else if(State == GameStates.BattleScene)
+            return battleScene;
+        else if(State == GameStates.DialogScene)
+            return dialogScene;
+        else if(State == GameStates.InventoryScene)
+            return inventoryScene;
+
+        return null;
+    }
+
+    private void TestSave()
+    {
+        try {
+
+            String path = context.getFilesDir().getAbsolutePath();
+            path = path + "/TestFile.txt";
+
+
+            File file = new File(path);
+
+            file.createNewFile();
+
+            PrintWriter out = new PrintWriter(file);
+            out.println("Fernando is bossmode9999999");
+            out.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            Log.e("File", "not found!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void TestLoad()
+    {
+        String path = context.getFilesDir().getAbsolutePath();
+        path = path + "/TestFile.txt";
+
+
+        File file = new File(path);
+
+        try {
+
+            Scanner myReader = new Scanner(file);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                Log.d("file", data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
     }
 

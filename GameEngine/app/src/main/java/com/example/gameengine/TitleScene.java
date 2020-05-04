@@ -6,19 +6,25 @@ import android.util.Log;
 public class TitleScene extends AbstractScene {
 
 
+    public TitleScene(GameCanvas GameCanvas) {
+        super(GameCanvas);
+    }
+
     @Override
     public void Draw(Canvas canvas) {
-
+        Log.d("Scene", "Title being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
+
         Log.d("Scene", "Title being updated");
     }
 
     @Override
     public void TouchDown(float x, float y) {
-
+        gameCanvas.RemoveCurrentState();
+        gameCanvas.CreateNewState(GameStates.AdventureScene);
     }
 
     @Override
@@ -75,4 +81,5 @@ public class TitleScene extends AbstractScene {
     public void CircleGesture(int circleID) {
 
     }
+
 }

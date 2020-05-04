@@ -3,29 +3,26 @@ package com.example.gameengine;
 import android.graphics.Canvas;
 import android.util.Log;
 
-import java.util.LinkedList;
+public class InventoryScene extends AbstractScene {
 
-public class AdventureScene extends AbstractScene {
 
-    LinkedList<AbstractSprite> sprites;
-
-    public AdventureScene(GameCanvas GameCanvas) {
+    public InventoryScene(GameCanvas GameCanvas) {
         super(GameCanvas);
     }
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Adventure being drawn");
+        Log.d("Scene", "Inventory being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
-        Log.d("Scene", "Adventure being updated");
+        Log.d("Scene", "Inventory being updated");
     }
 
     @Override
     public void TouchDown(float x, float y) {
-        gameCanvas.CreateNewState(GameStates.DialogScene);
+        gameCanvas.RemoveCurrentState();
     }
 
     @Override

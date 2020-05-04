@@ -5,10 +5,11 @@ import android.graphics.Color;
 
 public abstract class AbstractScene {
 
+    GameCanvas gameCanvas;
 
-    public AbstractScene()
+    public AbstractScene(GameCanvas GameCanvas)
     {
-
+        gameCanvas = GameCanvas;
     }
 
     abstract public void Draw(Canvas canvas);
