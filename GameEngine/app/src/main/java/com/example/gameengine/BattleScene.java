@@ -11,12 +11,12 @@ public class BattleScene extends AbstractScene {
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Battle being drawn");
+        //Log.d("Scene", "Battle being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
-        Log.d("Scene", "Battle being updated");
+        //Log.d("Scene", "Battle being updated");
     }
 
     @Override

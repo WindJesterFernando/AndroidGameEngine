@@ -15,13 +15,13 @@ public class TextSprite extends AbstractSprite {
         super(0);
         text = Text;
         topLeft = TopLeft;
-        paint.setTextSize(60);
+        localPaint.setTextSize(60);
     }
 
     @Override
     public void Draw(Canvas canvas)
     {
-        canvas.drawText(text, topLeft.x, topLeft.y, paint);
+        canvas.drawText(text, topLeft.x, topLeft.y, localPaint);
     }
 
     public void SetTopLeft(Vectror2 TopLeft) {
@@ -35,7 +35,7 @@ public class TextSprite extends AbstractSprite {
 
     public void SetTextSize(int Size)
     {
-        paint.setTextSize(Size);
+        localPaint.setTextSize(Size);
     }
 
     @Override
@@ -43,5 +43,12 @@ public class TextSprite extends AbstractSprite {
     {
 
     }
+
+    @Override
+    public void Draw(Canvas canvas, Paint paint)
+    {
+        canvas.drawText(text, topLeft.x, topLeft.y, paint);
+    }
+
 
 }

@@ -90,6 +90,19 @@ public class ContentLoader {
             spr.SetOrderInLayer(9);
             spr.SetTag("aStarTile");
         }
+        else if(id == SpriteID.blackMage) {
+            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.mage2), 1, 1, 0, 0);
+
+
+            spr.SetFrame(0, 0);
+            spr.SetPostion(new Vectror2(100, 100));
+            spr.SetScale(new Vectror2(2.5f, 2.5f));
+
+            spr.SetColor(Color.WHITE);
+
+            spr.SetOrderInLayer(9);
+            spr.SetTag("blackMage");
+        }
 
         return spr;
     }

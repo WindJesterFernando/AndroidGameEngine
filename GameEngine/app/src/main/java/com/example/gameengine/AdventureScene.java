@@ -15,12 +15,12 @@ public class AdventureScene extends AbstractScene {
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Adventure being drawn");
+        //Log.d("Scene", "Adventure being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
-        Log.d("Scene", "Adventure being updated");
+        //Log.d("Scene", "Adventure being updated");
     }
 
     @Override

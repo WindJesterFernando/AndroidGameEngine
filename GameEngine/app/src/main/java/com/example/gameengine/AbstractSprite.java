@@ -7,13 +7,13 @@ import android.graphics.Paint;
 public abstract class AbstractSprite {
 
     protected int orderInDrawLayer;
-    protected Paint paint;
+    protected Paint localPaint;
     protected String tag;
 
     public AbstractSprite(int OrderInDrawLayer)
     {
-        paint = new Paint();
-        paint.setColor(Color.WHITE);
+        localPaint = new Paint();
+        localPaint.setColor(Color.WHITE);
     }
 
     public int GetOrderInDrawLayer()
@@ -28,10 +28,11 @@ public abstract class AbstractSprite {
 
     public void SetColor(int ColorConstant)
     {
-        paint.setColor(ColorConstant);
+        localPaint.setColor(ColorConstant);
     }
 
     abstract public void Draw(Canvas canvas);
+    abstract public void Draw(Canvas canvas, Paint paint);
     abstract public void Update(long deltaTime);
 
     public int GetBottomPosition()

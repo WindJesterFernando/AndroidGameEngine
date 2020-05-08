@@ -20,7 +20,7 @@ public class LineSprite extends AbstractSprite {
     @Override
     public void Draw(Canvas canvas)
     {
-        canvas.drawLine(topLeft.x,topLeft.y, bottomRight.x , bottomRight.y, paint);
+        canvas.drawLine(topLeft.x,topLeft.y, bottomRight.x , bottomRight.y, localPaint);
     }
 
     public void SetTopLeft(Vectror2 TopLeft) {
@@ -35,6 +35,12 @@ public class LineSprite extends AbstractSprite {
     public void Update(long deltaTime)
     {
 
+    }
+
+    @Override
+    public void Draw(Canvas canvas, Paint paint)
+    {
+        canvas.drawLine(topLeft.x,topLeft.y, bottomRight.x , bottomRight.y, paint);
     }
 
 

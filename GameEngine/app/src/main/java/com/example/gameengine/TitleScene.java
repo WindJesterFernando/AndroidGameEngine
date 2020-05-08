@@ -12,13 +12,13 @@ public class TitleScene extends AbstractScene {
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Title being drawn");
+        //Log.d("Scene", "Title being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
 
-        Log.d("Scene", "Title being updated");
+        //Log.d("Scene", "Title being updated");
     }
 
     @Override

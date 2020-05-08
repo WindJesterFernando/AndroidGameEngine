@@ -12,12 +12,12 @@ public class InventoryScene extends AbstractScene {
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Inventory being drawn");
+        //Log.d("Scene", "Inventory being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
-        Log.d("Scene", "Inventory being updated");
+        //Log.d("Scene", "Inventory being updated");
     }
 
     @Override

@@ -190,11 +190,11 @@ public class Sprite extends AbstractSprite {
             canvas.save();//Saving the canvas and later restoring it so only this image will be rotated.
             canvas.rotate(rotation, position.x, position.y);
 
-            canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
+            canvas.drawBitmap(spriteSheet, srcRect, destRect, localPaint);
 
             canvas.restore();
         } else
-            canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
+            canvas.drawBitmap(spriteSheet, srcRect, destRect, localPaint);
     }
 
     public void SetRotation(float Rotation) {
@@ -209,7 +209,7 @@ public class Sprite extends AbstractSprite {
     public void SetColor(int colorConstant) {
 
         ColorFilter filter = new LightingColorFilter(colorConstant, 1);
-        paint.setColorFilter(filter);
+        localPaint.setColorFilter(filter);
 
         //Log.d("investigate", "" + PorterDuff.Mode..ADD + "   " + PorterDuff.Mode.MULTIPLY);
 
@@ -533,6 +533,20 @@ public class Sprite extends AbstractSprite {
     public void SetSlideFriction(float  SlideFriction)
     {
          slideFriction = SlideFriction;
+    }
+
+    @Override
+    public void Draw(Canvas canvas, Paint paint) {
+
+        if (rotation != 0) {
+            canvas.save();//Saving the canvas and later restoring it so only this image will be rotated.
+            canvas.rotate(rotation, position.x, position.y);
+
+            canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
+
+            canvas.restore();
+        } else
+            canvas.drawBitmap(spriteSheet, srcRect, destRect, paint);
     }
 
 }

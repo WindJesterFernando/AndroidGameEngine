@@ -3,9 +3,17 @@ package com.example.gameengine;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Color;
+import android.graphics.ComposeShader;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.SweepGradient;
 import android.util.DebugUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -55,6 +63,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     Stack<Integer> states;
 
+    //private final float viewRadius;
+    private Paint paint2;
+
+    long timeCounter;
+
     public GameCanvas(Context Context, int screenLength, int screenHeight) {
         super(Context);
 
@@ -103,6 +116,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         CreateNewState(GameStates.TitleScene);
 
+
+
+
     }
 
     @Override
@@ -128,7 +144,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        canvas.drawColor(Color.BLUE);
+        canvas.drawColor(Color.LTGRAY);
 
 
         for (int layer = 0 ; layer <= Constants.NumberOfLayers ; layer++) {
@@ -235,6 +251,130 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         {
           GetSceneAssociatedWithState(state).Draw(canvas);
         }
+
+
+
+//
+//        float percent = (float)timeCounter / 4000f;
+//
+        float xPos = 50.0f;
+        float yPos = 50.0f;
+        float size = 300.0f;
+        int startColor = Color.RED;
+        int targetColor = Color.BLUE;
+
+
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+
+        Shader originalShader = paint.getShader();
+
+        //LinearGradient
+        LinearGradient LinearGrad;
+
+        LinearGrad = new LinearGradient( xPos, yPos, xPos + size/2f, yPos + size/2f, startColor, targetColor, Shader.TileMode.CLAMP);
+        paint.setShader(LinearGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+        xPos += 350;
+        LinearGrad = new LinearGradient( xPos, yPos, xPos + size/2f, yPos + size/2f, startColor, targetColor, Shader.TileMode.MIRROR);
+        paint.setShader(LinearGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+        xPos += 350;
+        LinearGrad = new LinearGradient( xPos, yPos, xPos + size/2f, yPos + size/2f, startColor, targetColor, Shader.TileMode.REPEAT);
+        paint.setShader(LinearGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+
+        xPos = 50.0f;
+        yPos += 350;
+        RadialGradient radialGrad = new RadialGradient(xPos, yPos, size/2f, startColor, targetColor, Shader.TileMode.CLAMP);
+        paint.setShader(radialGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+        xPos += 350;
+        radialGrad = new RadialGradient(xPos, yPos, size/2f, startColor, targetColor, Shader.TileMode.MIRROR);
+        paint.setShader(radialGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+        xPos += 350;
+        radialGrad = new RadialGradient(xPos, yPos, size/2f, startColor, targetColor, Shader.TileMode.REPEAT);
+        paint.setShader(radialGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+
+
+
+        xPos = 50.0f;
+        yPos += 350;
+        SweepGradient sweepGrad = new SweepGradient(xPos, yPos, startColor, targetColor);
+        paint.setShader(radialGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+        xPos += 350.0f;
+        sweepGrad = new SweepGradient(xPos, yPos, targetColor, startColor);
+        paint.setShader(radialGrad);
+        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
+//
+//
+//
+//        paint.setShader(originalShader);
+//
+//        paint.setColor(Color.RED);
+//
+//        canvas.drawCircle(400, 1000, 200, paint);
+//
+//        paint.setColor(Color.GREEN);
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+//        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
+//        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.LIGHTEN));
+//        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DARKEN));
+//        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
+//        canvas.drawCircle(600, 1200, 300, paint);
+//
+//
+//        for (AbstractSprite s : onStageSprites) {
+//            s.Draw(canvas, paint);
+//        }
+
+
+//        Paint paint = new Paint();
+//        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(Color.WHITE);
+//
+//
+//        BitmapShader bitmapShader = new BitmapShader(ContentLoader.CreateNewSprite(SpriteID.blackMage).GetSpriteSheet(), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+//        paint.setShader(bitmapShader);
+
+        //canvas.drawRect(0,0,1500,1500, paint);
+        //canvas.drawCircle(400, 800, 400, paint);
+
+//        paint.setTextSize(200);
+//        canvas.drawText("Bitmap Shader!", 40, 500, paint);
+
+
+        //BitmapShader bitmapShader2 = new BitmapShader(ContentLoader.CreateNewSprite(SpriteID.test3).GetSpriteSheet(), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+//        paint.setShader(bitmapShader2);
+//        canvas.drawRect(0,0,1500,1500, paint);
+
+//        ComposeShader composeShader = new ComposeShader(bitmapShader, bitmapShader2, PorterDuff.Mode.SRC_OUT);
+//        paint.setShader(composeShader);
+//        canvas.drawRect(0,0,1500,1500, paint);
+//
+//
+
+
+
+
+
+        //Discard
+//        LinearGrad = new LinearGradient( xPos, yPos, (float) (xPos + size) * percent, (float) (yPos + size) * percent, startColor, targetColor, Shader.TileMode.MIRROR);
+//        paint.setShader(LinearGrad);
+//        canvas.drawRect(xPos, yPos, xPos + size, yPos + size, paint);
+
 
     }
 
@@ -361,6 +501,11 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         //lookAtAvatar.SetRotationToLookAtSprite(avatar);
 
         //avatar.SetRotation(avatar.GetRotation() + (0.25f * (float)deltaTime));
+
+        timeCounter += deltaTime;
+
+        if(timeCounter > 4000)
+            timeCounter -= 4000;
 
     }
 

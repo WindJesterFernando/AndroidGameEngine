@@ -12,12 +12,12 @@ public class DialogScene extends AbstractScene {
 
     @Override
     public void Draw(Canvas canvas) {
-        Log.d("Scene", "Dialog being drawn");
+        //Log.d("Scene", "Dialog being drawn");
     }
 
     @Override
     public void Update(long deltaTime) {
-        Log.d("Scene", "Dialog being updated");
+        //Log.d("Scene", "Dialog being updated");
     }
 
     @Override
