@@ -23,16 +23,18 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
 
-    long startTime;
-    long lastUpdateTime;
+//    long startTime;
+//    long lastUpdateTime;
     boolean gameOn;
-    Handler gameThread;
+    //Handler gameThread;
 
     GameCanvas gameCanvas;
 
     long timeSinceLastRender;
 
     MediaPlayer arrowSound;
+
+    GameLoopThread gameLoopThread;
 
 
     @Override
@@ -62,26 +64,32 @@ public class MainActivity extends AppCompatActivity {
 
 
         //How many milliseconds is it since the UNIX epoch
-        startTime = System.currentTimeMillis();
-        lastUpdateTime = startTime;
+//        startTime = System.currentTimeMillis();
+//        lastUpdateTime = startTime;
 
 
-        gameThread = new Handler() {
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (gameOn) {
-                    long deltaTime = System.currentTimeMillis() - lastUpdateTime;
-                    lastUpdateTime = System.currentTimeMillis();
-                    GameThreadUpdate(deltaTime);
-                }
-
-                gameThread.sendEmptyMessageDelayed(0, 1);
-            }
-        };
+//        gameThread = new Handler() {
+//            public void handleMessage(Message msg) {
+//
+//                super.handleMessage(msg);
+//
+//                if (gameOn) {
+//                    long deltaTime = System.currentTimeMillis() - lastUpdateTime;
+//                    lastUpdateTime = System.currentTimeMillis();
+//                    GameThreadUpdate(deltaTime);
+//                }
+//
+//                gameThread.sendEmptyMessageDelayed(0, 1);
+//            }
+//        };
 
         gameOn = true;
-        gameThread.sendEmptyMessage(0);
+//        gameThread.sendEmptyMessage(0);
 
+
+        gameLoopThread = new GameLoopThread(this);
+        gameLoopThread.start();
+        //gameLoopThread.run();
 
 
 
@@ -100,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         switch(action) {
             case (MotionEvent.ACTION_DOWN):
                 gameCanvas.TouchDown(event.getX(), event.getY());
-                //Log.d("input", "Action was DOWN");
+                Log.d("input", "Action was DOWN");
                 break;
             case (MotionEvent.ACTION_UP):
                 //Log.d("input", "Action was Up");
@@ -157,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    private void GameThreadUpdate(long deltaTime)
+    public void GameThreadUpdate(long deltaTime)
     {
 
         gameCanvas.Update(deltaTime);
