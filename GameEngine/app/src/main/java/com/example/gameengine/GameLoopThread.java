@@ -20,7 +20,7 @@ public class GameLoopThread extends Thread {
     public void run() {
 
         while (true) {
-            System.out.println("Running " + threadName);
+            //System.out.println("Running " + threadName);
             try {
                 long deltaTime = System.currentTimeMillis() - lastUpdateTime;
                 lastUpdateTime = System.currentTimeMillis();

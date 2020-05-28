@@ -89,18 +89,22 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
         onStageSprites = new LinkedList<AbstractSprite>();
 
-        onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test1));
+        //onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test1));
+
         //onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test2));
         onStageSprites.add(lookAtAvatar = ContentLoader.CreateNewSprite(SpriteID.test4));
+        ((Sprite)onStageSprites.getLast()).SetScale(new Vectror2(1,1));
+        ((Sprite)onStageSprites.getLast()).SetTag("Other");
         onStageSprites.add(avatar = ContentLoader.CreateNewSprite(SpriteID.test4));
-        avatar.SetPostion(new Vectror2(700, 800));
+        avatar.SetPostion(new Vectror2(1200, 800));
         avatar.SetTag("avatar");
 
         //lookAtAvatar.SetScale(new Vectror2(0.33f, 0.33f));
         avatar.SetScale(new Vectror2(0.33f, 0.33f));
         //avatar.SetCollisionResponseAction(CollisionResponseActions.SlideAlong);
         //avatar.SetSlideFriction(0.25f);
-        avatar.SetCollisionResponseAction(CollisionResponseActions.BounceOffOf);
+        avatar.SetCollisionResponseAction(CollisionResponseActions.SlideAlong);
+        avatar.SetTag("Avatar");
         avatar.SetBounceAtude(30);
 
         //aStarMap = new AStarMap();
@@ -120,13 +124,16 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         CreateNewState(GameStates.TitleScene);
 
 //
-        for (int i = 0; i< 120; i++)
-        {
-            onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test4));
-            ((Sprite)onStageSprites.getLast()).SetPostion(new Vectror2(100 + i * 25, 1300));
+//        for (int i = 0; i< 120; i++)
+//        {
+//            onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.test4));
+//            ((Sprite)onStageSprites.getLast()).SetPostion(new Vectror2(100 + i * 25, 1300));
+//
+//            //Log.d("note", "" + i * 150);
+//        }
 
-            //Log.d("note", "" + i * 150);
-        }
+        //onStageSprites.addLast(ContentLoader.CreateNewSprite(SpriteID.test3));
+        //
 
     }
 

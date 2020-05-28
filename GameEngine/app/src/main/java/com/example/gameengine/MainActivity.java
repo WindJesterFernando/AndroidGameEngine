@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,8 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         MakeFullScreen();
 
+//        Window window = getWindow();
+//        window.addFlags(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES);
 
 
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 
         //GetDisplaySize
@@ -57,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
         //Select Level to play - Could have a level select screen class to handle this instead.
         gameCanvas = new GameCanvas(this, size.x, size.y);
         setContentView(gameCanvas);
-
-
-
 
 
 
@@ -162,7 +164,9 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+
+        );
     }
 
     public void GameThreadUpdate(long deltaTime)
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 //            currentCanvasLevel.onResume();
 //        }
 
-        MakeFullScreen();   //Set to fullscreen when users jump back to our game.
+        //MakeFullScreen();   //Set to fullscreen when users jump back to our game.
     }
 
 

@@ -288,11 +288,28 @@ public class Sprite extends AbstractSprite {
         float ox1 = posWithSpeed.x - (frameSizeX / 2f * scale.x);
         float ox2 = posWithSpeed.x + (frameSizeX / 2f * scale.x);
 
-        if (x1 > ox1 && x1 < ox2)
+        if (x1 > ox1 && x1 < ox2) {
             xColRightWithSpeed = true;
+            Log.d("Col", "xColRightWithSpeed " + tag);
+        }
 
-        if (x2 > ox1 && x2 < ox2)
+        if (x2 > ox1 && x2 < ox2) {
             xColLeftWithSpeed = true;
+            Log.d("Col", "xColLeftWithSpeed " + tag);
+        }
+
+
+        /////FIX
+        if (ox1 > x1 && ox1 < x2) {
+            xColRightWithSpeed = true;
+            Log.d("Col", "xColRightWithSpeed " + tag);
+        }
+
+        if (ox2 > x1 && ox2 < x2) {
+            xColLeftWithSpeed = true;
+            Log.d("Col", "xColLeftWithSpeed " + tag);
+        }
+        //////////
 
 
         x1 = spr.GetPosition().x - (spr.GetFrameSizeX() / 2f * spr.GetScale().x);
@@ -301,11 +318,29 @@ public class Sprite extends AbstractSprite {
         ox1 = position.x - (frameSizeX / 2f * scale.x);
         ox2 = position.x + (frameSizeX / 2f * scale.x);
 
-        if (x1 > ox1 && x1 < ox2)
+        if (x1 > ox1 && x1 < ox2) {
             xColRight = true;
+            Log.d("Col", "xColRight "  + tag);
+        }
 
-        if (x2 > ox1 && x2 < ox2)
+        if (x2 > ox1 && x2 < ox2) {
             xColLeft = true;
+            Log.d("Col", "xColLeft "  + tag);
+        }
+
+
+
+        /////FIX
+        if (ox1 > x1 && ox1 < x2) {
+            xColRight = true;
+            Log.d("Col", "xColRight "  + tag);
+        }
+
+        if (ox2 > x1 && ox2 < x2) {
+            xColLeft = true;
+            Log.d("Col", "xColLeft "  + tag);
+        }
+        /////
 
 
         float y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
@@ -315,10 +350,31 @@ public class Sprite extends AbstractSprite {
         float oy2 = posWithSpeed.y + (frameSizeY / 2f * scale.y);
 
         if (y1 > oy1 && y1 < oy2)
+        {
             yColBottomWithSpeed = true;
+            Log.d("Col", "yColBottomWithSpeed "  + tag);
+        }
 
         if (y2 > oy1 && y2 < oy2)
+        {
             yColTopWithSpeed = true;
+            Log.d("Col", "yColTopWithSpeed "  + tag);
+        }
+
+
+        /////FIX
+        if (oy1 > y1 && oy1 < y2)
+        {
+            yColBottomWithSpeed = true;
+            Log.d("Col", "yColBottomWithSpeed "  + tag);
+        }
+
+        if (oy2 > y1 && oy2 < y2)
+        {
+            yColTopWithSpeed = true;
+            Log.d("Col", "yColTopWithSpeed "  + tag);
+        }
+        /////
 
 
         y1 = spr.GetPosition().y - (spr.GetFrameSizeY() / 2f * spr.GetScale().y);
@@ -328,20 +384,51 @@ public class Sprite extends AbstractSprite {
         oy2 = position.y + (frameSizeY / 2f * scale.y);
 
         if (y1 > oy1 && y1 < oy2)
+        {
             yColBottom = true;
-
+            Log.d("Col", "yColBottom "  + tag);
+        }
         if (y2 > oy1 && y2 < oy2)
+        {
             yColTop = true;
+            Log.d("Col", "yColTop "  + tag);
+        }
+
+
+        /////FIX
+        if (oy1 > y1 && oy1 < y2)
+        {
+            yColBottom = true;
+            Log.d("Col", "yColBottom "  + tag);
+        }
+        if (oy2 > y1 && oy2 < y2)
+        {
+            yColTop = true;
+            Log.d("Col", "yColTop "  + tag);
+        }
+        /////
+
+
+//        if(y1 < oy1 && y1 > oy2)
+//        //if(y1 < oy1 && oy1 < y2)
+//        {
+//            yColBottom = true;
+//            yColTop = true;
+//            Log.d("Col", "yColTopAndBottom "  + tag);
+//        }
+
 
 
         if ((xColLeftWithSpeed || xColRightWithSpeed) && (yColBottomWithSpeed || yColTopWithSpeed)) {
-            //Log.d("Collision","Bounding Box Detected");
+            Log.d("Collision","Bounding Box Detected");
 
             //WE NEED: Where the collision is, and by how much
 
 
-            if (collisionResponseAction == CollisionResponseActions.HoldInPlace)
+            if (collisionResponseAction == CollisionResponseActions.HoldInPlace) {
                 speed = null;
+                Log.d("Collision","Setting Speed to 0 on " + tag);
+            }
             //speed.y = 0;
             //speed.x = 0;
 
