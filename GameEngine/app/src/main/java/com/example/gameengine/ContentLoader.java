@@ -104,6 +104,63 @@ public class ContentLoader {
             spr.SetTag("blackMage");
         }
 
+        else if(id == SpriteID.DemoSprite)
+        {
+            StateAnimatingSprite sas = new StateAnimatingSprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.demospritesheet), 6, 4, 0,0, 120);
+            sas.SetFrame(0, 0);
+            sas.SetPostion(new Vectror2(400,1200));
+            sas.SetScale(new Vectror2(2f, 2f));
+
+            sas.SetColor(Color.WHITE);
+            sas.SetOrderInLayer(8);
+
+
+            sas.AddFrameBasedOnState(new AnimationFrame(0,0), SpriteStates.WalkingDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(1,0), SpriteStates.WalkingDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,0), SpriteStates.WalkingDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(3,0), SpriteStates.WalkingDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(4,0), SpriteStates.WalkingDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(5,0), SpriteStates.WalkingDown);
+
+            sas.AddFrameBasedOnState(new AnimationFrame(0,1), SpriteStates.WalkingUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(1,1), SpriteStates.WalkingUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,1), SpriteStates.WalkingUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(3,1), SpriteStates.WalkingUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(4,1), SpriteStates.WalkingUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(5,1), SpriteStates.WalkingUp);
+
+            sas.AddFrameBasedOnState(new AnimationFrame(0,2), SpriteStates.WalkingRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(1,2), SpriteStates.WalkingRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,2), SpriteStates.WalkingRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(3,2), SpriteStates.WalkingRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(4,2), SpriteStates.WalkingRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(5,2), SpriteStates.WalkingRight);
+
+            sas.AddFrameBasedOnState(new AnimationFrame(0,3), SpriteStates.WalkingLeft);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,3), SpriteStates.WalkingLeft);
+            sas.AddFrameBasedOnState(new AnimationFrame(3,3), SpriteStates.WalkingLeft);
+            sas.AddFrameBasedOnState(new AnimationFrame(4,3), SpriteStates.WalkingLeft);
+            sas.AddFrameBasedOnState(new AnimationFrame(1,3), SpriteStates.WalkingLeft);
+            sas.AddFrameBasedOnState(new AnimationFrame(5,3), SpriteStates.WalkingLeft);
+
+            sas.AddFrameBasedOnState(new AnimationFrame(2,0), SpriteStates.IdleDown);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,1), SpriteStates.IdleUp);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,2), SpriteStates.IdleRight);
+            sas.AddFrameBasedOnState(new AnimationFrame(2,3), SpriteStates.IdleLeft);
+
+            sas.SetState(SpriteStates.WalkingUp);
+
+//            as.AddFrame(new AnimationFrame(1,0));
+//            as.AddFrame(new AnimationFrame(2,0));
+//            as.AddFrame(new AnimationFrame(3,0));
+//            as.AddFrame(new AnimationFrame(4,0));
+//            as.AddFrame(new AnimationFrame(5,0));
+
+            sas.SetTag("DemoSprite");
+
+            return sas;
+        }
+
         return spr;
     }
 

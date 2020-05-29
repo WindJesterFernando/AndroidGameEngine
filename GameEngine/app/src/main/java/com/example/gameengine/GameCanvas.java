@@ -95,12 +95,12 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         onStageSprites.add(lookAtAvatar = ContentLoader.CreateNewSprite(SpriteID.test4));
         ((Sprite)onStageSprites.getLast()).SetScale(new Vectror2(1,1));
         ((Sprite)onStageSprites.getLast()).SetTag("Other");
-        onStageSprites.add(avatar = ContentLoader.CreateNewSprite(SpriteID.test4));
+        onStageSprites.add(avatar = ContentLoader.CreateNewSprite(SpriteID.DemoSprite));
         avatar.SetPostion(new Vectror2(1200, 800));
         avatar.SetTag("avatar");
 
         //lookAtAvatar.SetScale(new Vectror2(0.33f, 0.33f));
-        avatar.SetScale(new Vectror2(0.33f, 0.33f));
+        avatar.SetScale(new Vectror2(0.67f, 0.67f));
         //avatar.SetCollisionResponseAction(CollisionResponseActions.SlideAlong);
         //avatar.SetSlideFriction(0.25f);
         avatar.SetCollisionResponseAction(CollisionResponseActions.SlideAlong);
@@ -110,6 +110,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         //aStarMap = new AStarMap();
 
         //aStarMap2 = new AStarMap2();
+
+        onStageSprites.add(ContentLoader.CreateNewSprite(SpriteID.DemoSprite));
 
 
         states = new Stack<Integer>();

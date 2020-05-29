@@ -37,7 +37,7 @@ public class Sprite extends AbstractSprite {
 
     public boolean checkBoundingBoxCollisionDetection;
 
-    private Vectror2 speed;
+    protected Vectror2 speed;
 
     private int collisionResponseAction;
 
@@ -290,24 +290,24 @@ public class Sprite extends AbstractSprite {
 
         if (x1 > ox1 && x1 < ox2) {
             xColRightWithSpeed = true;
-            Log.d("Col", "xColRightWithSpeed " + tag);
+            //Log.d("Col", "xColRightWithSpeed " + tag);
         }
 
         if (x2 > ox1 && x2 < ox2) {
             xColLeftWithSpeed = true;
-            Log.d("Col", "xColLeftWithSpeed " + tag);
+            //Log.d("Col", "xColLeftWithSpeed " + tag);
         }
 
 
         /////FIX
         if (ox1 > x1 && ox1 < x2) {
             xColRightWithSpeed = true;
-            Log.d("Col", "xColRightWithSpeed " + tag);
+            //Log.d("Col", "xColRightWithSpeed " + tag);
         }
 
         if (ox2 > x1 && ox2 < x2) {
             xColLeftWithSpeed = true;
-            Log.d("Col", "xColLeftWithSpeed " + tag);
+            //Log.d("Col", "xColLeftWithSpeed " + tag);
         }
         //////////
 
@@ -320,12 +320,12 @@ public class Sprite extends AbstractSprite {
 
         if (x1 > ox1 && x1 < ox2) {
             xColRight = true;
-            Log.d("Col", "xColRight "  + tag);
+            //Log.d("Col", "xColRight "  + tag);
         }
 
         if (x2 > ox1 && x2 < ox2) {
             xColLeft = true;
-            Log.d("Col", "xColLeft "  + tag);
+            //Log.d("Col", "xColLeft "  + tag);
         }
 
 
@@ -333,12 +333,12 @@ public class Sprite extends AbstractSprite {
         /////FIX
         if (ox1 > x1 && ox1 < x2) {
             xColRight = true;
-            Log.d("Col", "xColRight "  + tag);
+            //Log.d("Col", "xColRight "  + tag);
         }
 
         if (ox2 > x1 && ox2 < x2) {
             xColLeft = true;
-            Log.d("Col", "xColLeft "  + tag);
+            //Log.d("Col", "xColLeft "  + tag);
         }
         /////
 
@@ -352,13 +352,13 @@ public class Sprite extends AbstractSprite {
         if (y1 > oy1 && y1 < oy2)
         {
             yColBottomWithSpeed = true;
-            Log.d("Col", "yColBottomWithSpeed "  + tag);
+            //Log.d("Col", "yColBottomWithSpeed "  + tag);
         }
 
         if (y2 > oy1 && y2 < oy2)
         {
             yColTopWithSpeed = true;
-            Log.d("Col", "yColTopWithSpeed "  + tag);
+            //Log.d("Col", "yColTopWithSpeed "  + tag);
         }
 
 
@@ -366,13 +366,13 @@ public class Sprite extends AbstractSprite {
         if (oy1 > y1 && oy1 < y2)
         {
             yColBottomWithSpeed = true;
-            Log.d("Col", "yColBottomWithSpeed "  + tag);
+            //Log.d("Col", "yColBottomWithSpeed "  + tag);
         }
 
         if (oy2 > y1 && oy2 < y2)
         {
             yColTopWithSpeed = true;
-            Log.d("Col", "yColTopWithSpeed "  + tag);
+            //Log.d("Col", "yColTopWithSpeed "  + tag);
         }
         /////
 
@@ -386,12 +386,12 @@ public class Sprite extends AbstractSprite {
         if (y1 > oy1 && y1 < oy2)
         {
             yColBottom = true;
-            Log.d("Col", "yColBottom "  + tag);
+            //Log.d("Col", "yColBottom "  + tag);
         }
         if (y2 > oy1 && y2 < oy2)
         {
             yColTop = true;
-            Log.d("Col", "yColTop "  + tag);
+            //Log.d("Col", "yColTop "  + tag);
         }
 
 
@@ -399,12 +399,12 @@ public class Sprite extends AbstractSprite {
         if (oy1 > y1 && oy1 < y2)
         {
             yColBottom = true;
-            Log.d("Col", "yColBottom "  + tag);
+            //Log.d("Col", "yColBottom "  + tag);
         }
         if (oy2 > y1 && oy2 < y2)
         {
             yColTop = true;
-            Log.d("Col", "yColTop "  + tag);
+            //Log.d("Col", "yColTop "  + tag);
         }
         /////
 
@@ -420,14 +420,14 @@ public class Sprite extends AbstractSprite {
 
 
         if ((xColLeftWithSpeed || xColRightWithSpeed) && (yColBottomWithSpeed || yColTopWithSpeed)) {
-            Log.d("Collision","Bounding Box Detected");
+            //Log.d("Collision","Bounding Box Detected");
 
             //WE NEED: Where the collision is, and by how much
 
 
             if (collisionResponseAction == CollisionResponseActions.HoldInPlace) {
                 speed = null;
-                Log.d("Collision","Setting Speed to 0 on " + tag);
+                //Log.d("Collision","Setting Speed to 0 on " + tag);
             }
             //speed.y = 0;
             //speed.x = 0;

@@ -24,6 +24,9 @@ public class AnimatingSprite extends Sprite {
     @Override
     public void Update(long deltaTime)
     {
+
+        //Log.d("checking", "update has been called");
+
         super.Update(deltaTime);
 
         timeSinceLastAnimationFrameChange += deltaTime;

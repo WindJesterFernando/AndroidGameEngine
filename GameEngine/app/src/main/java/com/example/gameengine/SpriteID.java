@@ -9,4 +9,6 @@ public final class SpriteID {
     static final public int aStarTile = 4;
     static final public int blackMage = 5;
 
+    static final public int DemoSprite = 6;
+
 }
