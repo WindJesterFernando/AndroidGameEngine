@@ -1,6 +1,7 @@
 package com.example.gameengine;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
@@ -8,9 +9,16 @@ public class ContentLoader {
 
     static private Context context;
 
+    static private Bitmap bitmap1, bitmap2, bitmap3;
+
     static public void Init(Context Context)
     {
         context = Context;
+
+        bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2);
+        bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.mage2);
+        bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.demospritesheet);
+
     }
 
     static public Sprite CreateNewSprite(int id)
@@ -18,7 +26,7 @@ public class ContentLoader {
         Sprite spr = null;
 
         if(id == SpriteID.test1) {
-            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2), 5, 1, 0, 0);
+            spr = new Sprite(bitmap1, 5, 1, 0, 0);
 
 
             spr.SetFrame(2, 0);
@@ -31,7 +39,7 @@ public class ContentLoader {
         }
         else if(id == SpriteID.test2)
         {
-            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2), 5, 1, 0,0);
+            spr = new Sprite(bitmap1, 5, 1, 0,0);
             spr.SetFrame(3, 0);
             spr.SetPostion(new Vectror2(400,600));
             spr.SetScale(new Vectror2(1f, 1f));
@@ -42,7 +50,7 @@ public class ContentLoader {
         }
         else if(id == SpriteID.test3)
         {
-            AnimatingSprite as = new AnimatingSprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2), 5, 1, 0,0, 500);
+            AnimatingSprite as = new AnimatingSprite(bitmap1, 5, 1, 0,0, 500);
             as.SetFrame(3, 0);
             as.SetPostion(new Vectror2(400,600));
             as.SetScale(new Vectror2(0.25f, 0.25f));
@@ -61,7 +69,7 @@ public class ContentLoader {
         }
         else if(id == SpriteID.test4)
         {
-            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2), 5, 1, 2,0);
+            spr = new Sprite(bitmap1, 5, 1, 2,0);
             //spr.SetFrame(3, 0);
             spr.SetPostion(new Vectror2(400,900));
             spr.SetScale(new Vectror2(0.25f, 0.25f));
@@ -73,12 +81,10 @@ public class ContentLoader {
             //spr.SetRadiusForCicleCollisionDetection(70f);
             spr.SetForBoundingBoxCollisionDetection();
 
-
-
         }
 
         else if(id == SpriteID.aStarTile) {
-            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.gems2), 50, 10, 0, 0);
+            spr = new Sprite(bitmap1, 50, 10, 0, 0);
 
 
             spr.SetFrame(0, 0);
@@ -91,7 +97,7 @@ public class ContentLoader {
             spr.SetTag("aStarTile");
         }
         else if(id == SpriteID.blackMage) {
-            spr = new Sprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.mage2), 1, 1, 0, 0);
+            spr = new Sprite(bitmap2, 1, 1, 0, 0);
 
 
             spr.SetFrame(0, 0);
@@ -106,7 +112,7 @@ public class ContentLoader {
 
         else if(id == SpriteID.DemoSprite)
         {
-            StateAnimatingSprite sas = new StateAnimatingSprite(BitmapFactory.decodeResource(context.getResources(), R.drawable.demospritesheet), 6, 4, 0,0, 120);
+            StateAnimatingSprite sas = new StateAnimatingSprite(bitmap3, 6, 4, 0,0, 120);
             sas.SetFrame(0, 0);
             sas.SetPostion(new Vectror2(400,1200));
             sas.SetScale(new Vectror2(2f, 2f));
@@ -157,6 +163,8 @@ public class ContentLoader {
 //            as.AddFrame(new AnimationFrame(5,0));
 
             sas.SetTag("DemoSprite");
+
+            sas.SetForBoundingBoxCollisionDetection();
 
             return sas;
         }

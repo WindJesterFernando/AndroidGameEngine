@@ -23,7 +23,6 @@ public class StateAnimatingSprite extends AnimatingSprite {
         walkingRightAnimationFrames = new LinkedList<AnimationFrame>();
         walkingLeftAnimationFrames = new LinkedList<AnimationFrame>();
 
-
         idleDownAnimationFrames = new LinkedList<AnimationFrame>();
         idleUpAnimationFrames = new LinkedList<AnimationFrame>();
         idleRightAnimationFrames = new LinkedList<AnimationFrame>();
@@ -40,7 +39,6 @@ public class StateAnimatingSprite extends AnimatingSprite {
             walkingRightAnimationFrames.add(animationFrame);
         else if(stateToAddTo == SpriteStates.WalkingLeft)
             walkingLeftAnimationFrames.add(animationFrame);
-
 
         else if(stateToAddTo == SpriteStates.IdleDown)
             idleDownAnimationFrames.add(animationFrame);
